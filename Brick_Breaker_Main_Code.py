@@ -6,7 +6,7 @@ import threading
 pygame.init()
 
 # Screen dimensions
-width, height = 800, 600
+width, height = 1920, 1080
 screen = pygame.display.set_mode((width, height))
 
 # Ball settings
