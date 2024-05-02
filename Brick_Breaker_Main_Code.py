@@ -13,11 +13,11 @@ screen = pygame.display.set_mode((width, height), pygame.DOUBLEBUF | pygame.HWSU
 pygame.display.set_caption("Brick Breaker")
 
 # Frame rate setup
-frame_rate = 70  # Adjusted frame rate
+frame_rate = 75  # Adjustable frame rate
 
 # Ball settings
 ball_radius = 20
-ball_color = (255, 0, 0)
+ball_color = (0, 0, 255)
 ball_pos = [width // 2, height // 2]
 angle = random.uniform(20, 160)
 speed = random.uniform(5, 7)
