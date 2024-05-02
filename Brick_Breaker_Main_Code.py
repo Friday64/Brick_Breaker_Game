@@ -18,7 +18,7 @@ gravity = 0.1
 energy_loss_factor = 0.9  # Energy loss on bouncing
 
 # Frame rate setup
-frame_rate = 60
+frame_rate = 75
 clock = pygame.time.Clock()
 
 # Lock for thread-safe operations on ball_pos
