@@ -1,25 +1,27 @@
 import pygame
 import sys
 import threading
+import random
+import math
 
 # Initialize Pygame
 pygame.init()
 
-# Screen dimensions
+# Screen dimensions and settings
 width, height = 1920, 1080
-screen = pygame.display.set_mode((width, height))
-
-# Ball settings
-ball_pos = [width // 960, height // 540]
-ball_radius = 14
-ball_color = (255, 0, 0)
-velocity = [2, 2]  # X and Y velocity
-gravity = 0.1
-energy_loss_factor = 0.9  # Energy loss on bouncing
+screen = pygame.display.set_mode((width, height), pygame.DOUBLEBUF | pygame.HWSURFACE)
+pygame.display.set_caption("Brick Breaker")
 
 # Frame rate setup
-frame_rate = 75
-clock = pygame.time.Clock()
+frame_rate = 70  # Adjusted frame rate
+
+# Ball settings
+ball_radius = 20
+ball_color = (255, 0, 0)
+ball_pos = [width // 2, height // 2]
+angle = random.uniform(20, 160)
+speed = random.uniform(5, 7)
+velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
 
 # Lock for thread-safe operations on ball_pos
 position_lock = threading.Lock()
@@ -30,20 +32,20 @@ def ball_behavior():
     while running:
         with position_lock:
             # Move the ball
-            ball_pos[0] += velocity[0]
-            ball_pos[1] += velocity[1]
+            ball_pos[0] += int(velocity[0])
+            ball_pos[1] += int(velocity[1])
 
-            # Gravity effect
-            velocity[1] += gravity
+            # Gravity effect (if applicable)
+            # velocity[1] += gravity (This can be adjusted based on game physics needs)
 
-            # Collision detection with the walls
+            # Collision detection with the walls (simplified for this example)
             if ball_pos[0] <= ball_radius or ball_pos[0] >= width - ball_radius:
-                velocity[0] = -velocity[0] * energy_loss_factor
-                ball_pos[0] = ball_radius if ball_pos[0] < ball_radius else width - ball_radius
-            
+                velocity[0] = -velocity[0]
             if ball_pos[1] <= ball_radius or ball_pos[1] >= height - ball_radius:
-                velocity[1] = -velocity[1] * energy_loss_factor
-                ball_pos[1] = ball_radius if ball_pos[1] < ball_radius else height - ball_radius
+                velocity[1] = -velocity[1]
+
+        # Simulate frame rate for the thread
+        pygame.time.wait(int(1000 / frame_rate))
 
 # Thread for ball movement
 ball_thread = threading.Thread(target=ball_behavior)
@@ -57,18 +59,14 @@ while running:
             running = False
             ball_thread.join()  # Ensure thread is cleaned up on quit
 
-    # Clear screen
     screen.fill((0, 0, 0))
 
     # Draw the ball
     with position_lock:
         pygame.draw.circle(screen, ball_color, ball_pos, ball_radius)
 
-    # Update the display
     pygame.display.flip()
-
-    # Frame rate control
-    clock.tick(frame_rate)
+    pygame.time.Clock().tick(frame_rate)
 
 pygame.quit()
 sys.exit()
