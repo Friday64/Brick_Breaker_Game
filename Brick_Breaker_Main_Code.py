@@ -11,7 +11,7 @@ screen = pygame.display.set_mode((width, height))
 
 # Ball settings
 ball_pos = [width // 960, height // 540]
-ball_radius = 15
+ball_radius = 14
 ball_color = (255, 0, 0)
 velocity = [2, 2]  # X and Y velocity
 gravity = 0.1
