@@ -10,7 +10,7 @@ width, height = 1920, 1080
 screen = pygame.display.set_mode((width, height))
 
 # Ball settings
-ball_pos = [width // 2, height // 2]
+ball_pos = [width // 960, height // 540]
 ball_radius = 15
 ball_color = (255, 0, 0)
 velocity = [2, 2]  # X and Y velocity
