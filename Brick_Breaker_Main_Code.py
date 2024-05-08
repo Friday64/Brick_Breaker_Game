@@ -20,7 +20,7 @@ ball_radius = 20
 ball_color = (0, 0, 255)
 ball_pos = [width // 2, height // 2]
 angle = random.uniform(20, 160)
-speed = random.uniform(5, 7)
+speed = random.uniform(7, 11)
 velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
 
 # Lock for thread-safe operations on ball_pos
