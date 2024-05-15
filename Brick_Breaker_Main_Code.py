@@ -42,11 +42,6 @@ angle = random.uniform(20, 160)
 speed = random.uniform(7, 11)
 velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
 
-
-#paddle x position
-paddle_pos_x = width // 2 - paddle_width // 2
-
-
 # Lock for thread-safe operations on ball_pos
 position_lock = threading.Lock()
 
