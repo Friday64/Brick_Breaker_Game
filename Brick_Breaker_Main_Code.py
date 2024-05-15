@@ -46,14 +46,27 @@ def ball_behavior():
             # Move the ball with gravity effect
             ball_pos[0] += int(velocity[0])
             ball_pos[1] += int(velocity[1])
-
-            # Gravity effect (if applicable)
-            velocity[1] += gravity # type: ignore
-
-            # Collision detection with the walls, ball can't pass through walls
+  
+            # Collision detection with the walls
             if ball_pos[0] <= ball_radius or ball_pos[0] >= width - ball_radius:
                 velocity[0] = -velocity[0]
             if ball_pos[1] <= ball_radius or ball_pos[1] >= height - ball_radius:
+                velocity[1] = -velocity[1]
+
+            # function to keep ball on the screen
+            if ball_pos[0] <= 0:
+                ball_pos[0] = 0
+                velocity[0] = -velocity[0]
+            if ball_pos[0] >= width:
+                ball_pos[0] = width
+                velocity[0] = -velocity[0]
+
+            if ball_pos[1] <= 0:
+                ball_pos[1] = 0
+                velocity[1] = -velocity[1]
+
+            if ball_pos[1] >= height:
+                ball_pos[1] = height
                 velocity[1] = -velocity[1]
 
             # Collision detection with the paddle
@@ -78,7 +91,7 @@ while running:
 
     screen.fill((0, 0, 0))
 
-    # Draw the ball
+    # Draw the ball and paddle
     with position_lock:
         pygame.draw.circle(screen, ball_color, ball_pos, ball_radius)
         pygame.draw.rect(screen, (255, 255, 255), (paddle_pos_x, paddle_pos_y, paddle_width, paddle_length), 0)
