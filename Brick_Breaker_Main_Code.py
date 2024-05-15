@@ -28,11 +28,27 @@ def draw_edges():
 paddle_width = 400
 paddle_height = 20
 paddle_pos_y = height - 100
-paddle_pos_x = width // 2 - paddle_width // 2
+paddle_pos_x = width
+paddle_speed = 10 
 
 # Function to draw the paddle
 def draw_paddle(x, y):
     pygame.draw.rect(screen, WHITE, (x, y, paddle_width, paddle_height), 0)
+
+# Function to move the paddle
+def move_paddle():
+    global paddle_pos_x
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT] or keys[pygame.K_a]:
+        paddle_pos_x -= paddle_speed
+    if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
+        paddle_pos_x += paddle_speed
+
+    # Make sure the paddle doesn't go off screen
+    if paddle_pos_x < 0:
+        paddle_pos_x = 0
+    if paddle_pos_x > width - paddle_width:
+        paddle_pos_x = width - paddle_width
 
 # Ball settings
 ball_radius = 20
