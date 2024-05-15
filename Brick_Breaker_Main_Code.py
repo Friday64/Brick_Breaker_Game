@@ -65,8 +65,6 @@ def ball_behavior():
 #created thread for ball behavior
 ball_thread = threading.Thread(target=ball_behavior)
 
-
-
 # Main loop
 running = True
 while running:
