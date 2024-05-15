@@ -58,14 +58,16 @@ def ball_behavior():
             ball_pos[0] += int(velocity[0])
             ball_pos[1] += int(velocity[1])
   
-            # Collision detection with the walls
+            # Collision detection with the edges
             if ball_pos[0] <= ball_radius or ball_pos[0] >= width - ball_radius:
                 velocity[0] = -velocity[0]
             if ball_pos[1] <= ball_radius or ball_pos[1] >= height - ball_radius:
                 velocity[1] = -velocity[1]
-
+            
             # Collision detection with the paddle
-           
+            if ball_pos[1] >= paddle_pos_y - ball_radius and ball_pos[1] <= paddle_pos_y + paddle_length + ball_radius:
+                if ball_pos[0] >= paddle_pos_x - ball_radius and ball_pos[0] <= paddle_pos_x + paddle_width + ball_radius:
+                    velocity[1] = -velocity[1]
             
         # Simulate frame rate for the thread
         pygame.time.wait(int(1000 / frame_rate))
@@ -83,10 +85,11 @@ while running:
             ball_thread.join()  # Ensure thread is cleaned up on quit
 
     screen.fill((0, 0, 0))
-    #draw ball and paddle
+    #draw ball and paddle on 
     pygame.draw.circle(screen, ball_color, ball_pos, ball_radius, 0)
     paddle(paddle_pos_x, paddle_pos_y)
-    
+
+
     pygame.display.flip()
     pygame.time.Clock().tick(frame_rate)
 
