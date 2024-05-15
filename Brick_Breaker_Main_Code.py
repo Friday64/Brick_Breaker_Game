@@ -15,6 +15,22 @@ width, height = 1920, 1080
 screen = pygame.display.set_mode((width, height), pygame.DOUBLEBUF | pygame.HWSURFACE)
 pygame.display.set_caption("Brick Breaker")
 
+#edges of the screen be hard coded and nothing can pass through them at all costs (they are invisible)
+def edges():
+    pygame.draw.rect(screen, (255, 255, 255), (0, 0, 10, height), 0)
+    pygame.draw.rect(screen, (255, 255, 255), (width - 10, 0, 10, height), 0)
+    pygame.draw.rect(screen, (255, 255, 255), (0, 0, width, 10), 0)
+    pygame.draw.rect(screen, (255, 255, 255), (0, height - 10, width, 10), 0)
+
+#Paddle Setting values
+paddle_width = 400
+paddle_length = 100
+paddle_pos_y = height - 50
+
+# Function to draw the paddle
+def paddle(x, y):
+    pygame.draw.rect(screen, (255, 255, 255), (x, y, paddle_width, paddle_length), 0)
+    
 # Frame rate setup
 frame_rate = 75  # Adjustable frame rate
 
@@ -26,10 +42,6 @@ angle = random.uniform(20, 160)
 speed = random.uniform(7, 11)
 velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
 
-#Paddle Setting values
-paddle_width = 400
-paddle_length = 100
-paddle_pos_y = height - 50
 
 #paddle x position
 paddle_pos_x = width // 2 - paddle_width // 2
