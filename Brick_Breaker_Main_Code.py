@@ -43,7 +43,7 @@ def ball_behavior():
     running = True
     while running:
         with position_lock:
-            # Move the ball
+            # Move the ball with gravity effect
             ball_pos[0] += int(velocity[0])
             ball_pos[1] += int(velocity[1])
 
