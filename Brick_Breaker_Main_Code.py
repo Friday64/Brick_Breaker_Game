@@ -50,7 +50,13 @@ def ball_behavior():
             # Gravity effect (if applicable)
             # velocity[1] += gravity (This can be adjusted based on game physics needs)
 
-            # Collision detection with the walls (simplified for this example)
+            # Wall bounce
+            if ball_pos[0] <= ball_radius or ball_pos[0] >= width - ball_radius:
+                velocity[0] = -velocity[0]
+            if ball_pos[1] <= ball_radius or ball_pos[1] >= height - ball_radius:
+                velocity[1] = -velocity[1]
+                
+            # Collision detection with the walls, ball can't pass through walls
             if ball_pos[0] <= ball_radius or ball_pos[0] >= width - ball_radius:
                 velocity[0] = -velocity[0]
             if ball_pos[1] <= ball_radius or ball_pos[1] >= height - ball_radius:
@@ -60,7 +66,6 @@ def ball_behavior():
             if ball_pos[1] >= paddle_pos_y - ball_radius and ball_pos[1] <= paddle_pos_y + paddle_length + ball_radius:
                 if ball_pos[0] >= paddle_pos_x - ball_radius and ball_pos[0] <= paddle_pos_x + paddle_width + ball_radius:
                     velocity[1] = -velocity[1]
-                    
 
         # Simulate frame rate for the thread
         pygame.time.wait(int(1000 / frame_rate))
