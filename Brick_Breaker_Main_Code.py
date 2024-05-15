@@ -62,31 +62,25 @@ def ball_behavior():
                 if ball_pos[0] >= paddle_pos_x - ball_radius and ball_pos[0] <= paddle_pos_x + paddle_width + ball_radius:
                     velocity[1] = -velocity[1]
 
-
-# Thread for ball movement
-ball_thread = threading.Thread(target=ball_behavior)
-ball_thread.start()
-
 # Main loop
 running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-            ball_thread.join()  # Ensure thread is cleaned up on quit
 
     screen.fill((0, 0, 0))
-    #draw ball and paddle on 
+    
+    #draw ball and paddle on the screen with 
     pygame.draw.circle(screen, ball_color, ball_pos, ball_radius, 0)
     paddle(paddle_pos_x, paddle_pos_y)
+    #use ball_behavior function
+    ball_behavior()
 
      # Update the display with frame_rate value
     pygame.display.update()
 
-    # Quit the game if the window is closed
-    if not pygame.display.get_init():
-        running = False
-        ball_thread.join()
+   
 
 pygame.quit()
 sys.exit()
