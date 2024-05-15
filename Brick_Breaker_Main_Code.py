@@ -25,14 +25,15 @@ def edges():
 #Paddle Setting values
 paddle_width = 400
 paddle_length = 100
-paddle_pos_y = height - 50
+paddle_pos_y = height - 100
+paddle_pos_x = width // 2 - paddle_width // 2
 
 # Function to draw the paddle
 def paddle(x, y):
     pygame.draw.rect(screen, (255, 255, 255), (x, y, paddle_width, paddle_length), 0)
-    
-# Frame rate setup
-frame_rate = 75  # Adjustable frame rate
+
+# Draw the paddle at the initial position
+paddle(paddle_pos_x, paddle_pos_y)
 
 # Ball settings
 ball_radius = 20
@@ -41,6 +42,9 @@ ball_pos = [width // 2, height // 2]
 angle = random.uniform(20, 160)
 speed = random.uniform(7, 11)
 velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
+
+# Frame rate setup
+frame_rate = 75  # Adjustable frame rate
 
 # Lock for thread-safe operations on ball_pos
 position_lock = threading.Lock()
@@ -60,27 +64,9 @@ def ball_behavior():
             if ball_pos[1] <= ball_radius or ball_pos[1] >= height - ball_radius:
                 velocity[1] = -velocity[1]
 
-            # function to keep ball on the screen
-            if ball_pos[0] <= 0:
-                ball_pos[0] = 0
-                velocity[0] = -velocity[0]
-            if ball_pos[0] >= width:
-                ball_pos[0] = width
-                velocity[0] = -velocity[0]
-
-            if ball_pos[1] <= 0:
-                ball_pos[1] = 0
-                velocity[1] = -velocity[1]
-
-            if ball_pos[1] >= height:
-                ball_pos[1] = height
-                velocity[1] = -velocity[1]
-
             # Collision detection with the paddle
-            if ball_pos[1] >= paddle_pos_y - ball_radius and ball_pos[1] <= paddle_pos_y + paddle_length + ball_radius:
-                if ball_pos[0] >= paddle_pos_x - ball_radius and ball_pos[0] <= paddle_pos_x + paddle_width + ball_radius:
-                    velocity[1] = -velocity[1]
-
+           
+            
         # Simulate frame rate for the thread
         pygame.time.wait(int(1000 / frame_rate))
 
@@ -97,16 +83,10 @@ while running:
             ball_thread.join()  # Ensure thread is cleaned up on quit
 
     screen.fill((0, 0, 0))
-
-    # Draw the ball and paddle
-    with position_lock:
-        pygame.draw.circle(screen, ball_color, ball_pos, ball_radius)
-        pygame.draw.rect(screen, (255, 255, 255), (paddle_pos_x, paddle_pos_y, paddle_width, paddle_length), 0)
-        translucent_surface = pygame.Surface((paddle_length, paddle_width), pygame.SRCALPHA)
-        translucent_surface.fill((*BLACK, 25))
-        screen.blit(translucent_surface, (paddle_pos_x, paddle_pos_y))
-
-   
+    #draw ball and paddle
+    pygame.draw.circle(screen, ball_color, ball_pos, ball_radius, 0)
+    paddle(paddle_pos_x, paddle_pos_y)
+    
     pygame.display.flip()
     pygame.time.Clock().tick(frame_rate)
 
