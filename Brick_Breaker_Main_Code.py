@@ -93,19 +93,13 @@ def ball_behavior():
             if ball_pos[0] >= paddle_pos_x and ball_pos[0] <= paddle_pos_x + paddle_width:
                 velocity[1] = -velocity[1]
 
-        # Collision detection with the bricks, brick is destroyed if hit
+        # Collision detection with the bricks
         for i in range(brick_rows):
             for j in range(brick_columns):
-
                 if ball_pos[1] >= brick_offset_y + i * (brick_height + brick_spacing) and ball_pos[1] <= brick_offset_y + i * (brick_height + brick_spacing) + brick_height:
                     if ball_pos[0] >= brick_offset_x + j * (brick_width + brick_spacing) and ball_pos[0] <= brick_offset_x + j * (brick_width + brick_spacing) + brick_width:
                         velocity[1] = -velocity[1]
-
-                        # Destroy the brick
-                        if ball_pos[1] >= brick_offset_y + i * (brick_height + brick_spacing) and ball_pos[1] <= brick_offset_y + i * (brick_height + brick_spacing) + brick_height:
-                            if ball_pos[0] >= brick_offset_x + j * (brick_width + brick_spacing) and ball_pos[0] <= brick_offset_x + j * (brick_width + brick_spacing) + brick_width:
-                                velocity[1] = -velocity[1]
-                                
+       
         # Limit the frame rate
         pygame.time.Clock().tick(frame_rate)
 
