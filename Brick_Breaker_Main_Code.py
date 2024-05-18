@@ -123,9 +123,15 @@ while running:
     # Fill the screen with black
     screen.fill(BLACK)
 
-    # Draw everything
+    # Draw edges
     draw_edges()
-    draw_brick(brick_offset_x, brick_offset_y)
+    
+    #for loop to draw bricks
+    for i in range(brick_rows):
+        for j in range(brick_columns):
+            draw_brick(brick_offset_x + j * (brick_width + brick_spacing), brick_offset_y + i * (brick_height + brick_spacing))
+
+    # Draw paddle and ball
     draw_paddle(paddle_pos_x, paddle_pos_y)
     pygame.draw.circle(screen, ball_color, (int(ball_pos[0]), int(ball_pos[1])), ball_radius)
 
