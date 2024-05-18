@@ -31,6 +31,20 @@ paddle_pos_y = height - 100
 paddle_pos_x = width
 paddle_speed = 10 
 
+#brick settings
+brick_rows = 5
+brick_columns = 10
+brick_width = 100
+brick_height = 50
+brick_spacing = 10
+brick_offset_x = (width - (brick_columns * (brick_width + brick_spacing))) // 2
+brick_offset_y = 50
+
+#function to draw bricks on a grid of configured size
+def draw_brick(x, y):
+    pygame.draw.rect(screen, WHITE, (x, y, 100, 50), 0)
+
+
 # Function to draw the paddle
 def draw_paddle(x, y):
     pygame.draw.rect(screen, WHITE, (x, y, paddle_width, paddle_height), 0)
@@ -111,6 +125,7 @@ while running:
 
     # Draw everything
     draw_edges()
+    draw_brick(brick_offset_x, brick_offset_y)
     draw_paddle(paddle_pos_x, paddle_pos_y)
     pygame.draw.circle(screen, ball_color, (int(ball_pos[0]), int(ball_pos[1])), ball_radius)
 
