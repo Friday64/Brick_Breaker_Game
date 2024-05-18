@@ -40,9 +40,23 @@ brick_spacing = 10
 brick_offset_x = (width - (brick_columns * (brick_width + brick_spacing))) // 2
 brick_offset_y = 50
 
+
 #function to draw bricks on a grid of configured size
 def draw_brick(x, y):
     pygame.draw.rect(screen, WHITE, (x, y, 100, 50), 0)
+
+#empty array to store bricks, bricks_pos_x and bricks_pos_y are arrays of arrays
+bricks = []
+bricks_pos_x = []
+bricks_pos_y = []
+for i in range(brick_rows):
+    bricks.append([])
+    bricks_pos_x.append([])
+    bricks_pos_y.append([])
+    for j in range(brick_columns):
+        bricks[i].append(1)
+        bricks_pos_x[i].append(brick_offset_x + j * (brick_width + brick_spacing))
+        bricks_pos_y[i].append(brick_offset_y + i * (brick_height + brick_spacing))
 
 
 # Function to draw the paddle
@@ -82,28 +96,24 @@ def ball_behavior():
         ball_pos[0] += velocity[0]
         ball_pos[1] += velocity[1]
   
-        # Collision detection with the edges
-        if ball_pos[0] - ball_radius <= 0 or ball_pos[0] + ball_radius >= width:
+        # ball Collision detection with the edges
+        if ball_pos[0] <= 0 or ball_pos[0] >= width - ball_radius:
             velocity[0] = -velocity[0]
-        if ball_pos[1] - ball_radius <= 0 or ball_pos[1] + ball_radius >= height:
+        if ball_pos[1] <= 0 or ball_pos[1] >= height - ball_radius:
             velocity[1] = -velocity[1]
-        
-        # Collision detection with the paddle
-        if ball_pos[1] + ball_radius >= paddle_pos_y and ball_pos[1] - ball_radius <= paddle_pos_y + paddle_height:
-            if ball_pos[0] + ball_radius >= paddle_pos_x and ball_pos[0] - ball_radius <= paddle_pos_x + paddle_width:
-                velocity[1] = -velocity[1]
-        
-        # Collision detection with the bricks
+       
+        # ball Collision detection with paddle
+        if ball_pos[0] >= paddle_pos_x and ball_pos[0] <= paddle_pos_x + paddle_width and ball_pos[1] >= paddle_pos_y and ball_pos[1] <= paddle_pos_y + paddle_height:
+            velocity[1] = -velocity[1]
+
+        # ball Collision detection with bricks
         for i in range(brick_rows):
             for j in range(brick_columns):
-                if ball_pos[1] + ball_radius >= brick_offset_y + i * (brick_height + brick_spacing) and ball_pos[1] - ball_radius <= brick_offset_y + i * (brick_height + brick_spacing) + brick_height:
-                    if ball_pos[0] + ball_radius >= brick_offset_x + j * (brick_width + brick_spacing) and ball_pos[0] - ball_radius <= brick_offset_x + j * (brick_width + brick_spacing) + brick_width:
+                if bricks[i][j] == 1:
+                    if ball_pos[0] >= bricks_pos_x[i][j] and ball_pos[0] <= bricks_pos_x[i][j] + brick_width and ball_pos[1] >= bricks_pos_y[i][j] and ball_pos[1] <= bricks_pos_y[i][j] + brick_height:
+                        bricks[i][j] = 0
                         velocity[1] = -velocity[1]
-                    elif ball_pos[0] - ball_radius <= brick_offset_x + j * (brick_width + brick_spacing) and ball_pos[0] + ball_radius >= brick_offset_x + j * (brick_width + brick_spacing):
-                        velocity[0] = -velocity[0]
-                    elif ball_pos[0] + ball_radius >= brick_offset_x + j * (brick_width + brick_spacing) + brick_width and ball_pos[0] - ball_radius <= brick_offset_x + j * (brick_width + brick_spacing) + brick_width:
-                        velocity[0] = -velocity[0]
-        
+
         # Limit the frame rate
         pygame.time.Clock().tick(frame_rate)
 
@@ -137,11 +147,13 @@ while running:
     # Draw edges
     draw_edges()
     
-    #for loop to draw bricks
+    #for loop to draw set of bricks within the grid
     for i in range(brick_rows):
         for j in range(brick_columns):
-            draw_brick(brick_offset_x + j * (brick_width + brick_spacing), brick_offset_y + i * (brick_height + brick_spacing))
+            if bricks[i][j] == 1:
+                draw_brick(bricks_pos_x[i][j], bricks_pos_y[i][j])
 
+    
     # Draw paddle and ball
     draw_paddle(paddle_pos_x, paddle_pos_y)
     pygame.draw.circle(screen, ball_color, (int(ball_pos[0]), int(ball_pos[1])), ball_radius)
