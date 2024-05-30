@@ -162,7 +162,6 @@ while running:
             if bricks[i][j] == 1:
                 draw_bricks(bricks_pos_x[i][j], bricks_pos_y[i][j])
 
-    
     # Draw paddle and ball
     draw_paddle(paddle_pos_x, paddle_pos_y)
     pygame.draw.circle(screen, ball_color, (int(ball_pos[0]), int(ball_pos[1])), ball_radius)
