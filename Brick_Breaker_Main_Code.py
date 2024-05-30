@@ -40,7 +40,6 @@ brick_spacing = 10
 brick_offset_x = (width - (brick_columns * (brick_width + brick_spacing))) // 2
 brick_offset_y = 50
 
-
 #function to draw bricks on a grid of configured size
 def draw_brick(x, y):
     pygame.draw.rect(screen, WHITE, (x, y, 100, 50), 0)
@@ -57,7 +56,6 @@ for i in range(brick_rows):
         bricks[i].append(1)
         bricks_pos_x[i].append(brick_offset_x + j * (brick_width + brick_spacing))
         bricks_pos_y[i].append(brick_offset_y + i * (brick_height + brick_spacing))
-
 
 # Function to draw the paddle
 def draw_paddle(x, y):
