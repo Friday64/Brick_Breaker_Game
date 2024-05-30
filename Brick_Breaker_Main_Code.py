@@ -161,7 +161,7 @@ while running:
     for i in range(brick_rows):
         for j in range(brick_columns):
             if bricks[i][j] == 1:
-                draw_brick(bricks_pos_x[i][j], bricks_pos_y[i][j])
+                draw_bricks(bricks_pos_x[i][j], bricks_pos_y[i][j])
 
     
     # Draw paddle and ball
