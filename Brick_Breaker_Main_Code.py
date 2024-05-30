@@ -31,7 +31,15 @@ paddle_pos_y = height - 100
 paddle_pos_x = width
 paddle_speed = 10 
 
-#brick settings
+
+#function to make brick colors random RGB values as a single variable
+def random_color():
+    r = random.randint(0, 255)
+    g = random.randint(0, 255)
+    b = random.randint(0, 255)
+    return (r, g, b)
+
+#brick settings including random colors
 brick_rows = 5
 brick_columns = 10
 brick_width = 100
@@ -39,10 +47,14 @@ brick_height = 50
 brick_spacing = 10
 brick_offset_x = (width - (brick_columns * (brick_width + brick_spacing))) // 2
 brick_offset_y = 50
+random_color = random_color()
 
-#function to draw bricks on a grid of configured size
-def draw_brick(x, y):
-    pygame.draw.rect(screen, WHITE, (x, y, 100, 50), 0)
+#function to draw bricks on a grid of configured size with random colors
+def draw_bricks():
+    for i in range(brick_rows):
+        for j in range(brick_columns):
+            if bricks[i][j] == 1:
+                pygame.draw.rect(screen, random_color, (bricks_pos_x[i][j], bricks_pos_y[i][j], brick_width, brick_height), 0)
 
 #empty array to store bricks, bricks_pos_x and bricks_pos_y are arrays of arrays
 bricks = []
