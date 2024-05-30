@@ -31,7 +31,6 @@ paddle_pos_y = height - 100
 paddle_pos_x = width
 paddle_speed = 10 
 
-
 #function to make brick colors random RGB values as a single variable
 def random_color():
     r = random.randint(0, 255)
