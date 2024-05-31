@@ -130,7 +130,9 @@ def ball_behavior():
 
 # Start the ball behavior thread
 running = True
+
 ball_thread = threading.Thread(target=ball_behavior)
+
 ball_thread.start()
 
 # Main loop
@@ -140,14 +142,16 @@ while running:
             running = False
 
     screen.fill(BLACK)
-
     move_paddle()
-
+    
     draw_bricks()
+    
     draw_edges()
+    
     draw_paddle(paddle_pos_x, paddle_pos_y)
+    
     pygame.draw.circle(screen, ball_color, (int(ball_pos[0]), int(ball_pos[1])), ball_radius)
-
+    
     pygame.display.flip()
 
     pygame.time.Clock().tick(frame_rate)
