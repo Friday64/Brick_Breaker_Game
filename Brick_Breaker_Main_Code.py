@@ -48,13 +48,6 @@ brick_offset_x = (width - (brick_columns * (brick_width + brick_spacing))) // 2
 brick_offset_y = 50
 random_color = random_color()
 
-#function to draw bricks on a grid of configured size with random colors
-def draw_bricks():
-    for i in range(brick_rows):
-        for j in range(brick_columns):
-            if bricks[i][j] == 1:
-                pygame.draw.rect(screen, random_color, (bricks_pos_x[i][j], bricks_pos_y[i][j], brick_width, brick_height), 0)
-
 #empty array to store bricks, bricks_pos_x and bricks_pos_y are arrays of arrays
 bricks = []
 bricks_pos_x = []
@@ -67,6 +60,13 @@ for i in range(brick_rows):
         bricks[i].append(1)
         bricks_pos_x[i].append(brick_offset_x + j * (brick_width + brick_spacing))
         bricks_pos_y[i].append(brick_offset_y + i * (brick_height + brick_spacing))
+
+#function to draw bricks on a grid of configured size with random colors
+def draw_bricks():
+    for i in range(brick_rows):
+        for j in range(brick_columns):
+            if bricks[i][j] == 1:
+                pygame.draw.rect(screen, random_color, (bricks_pos_x[i][j], bricks_pos_y[i][j], brick_width, brick_height), 0)
 
 # Function to draw the paddle
 def draw_paddle(x, y):
@@ -136,6 +136,8 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+    
+    draw_bricks()
 
     # Get keys pressed
     keys = pygame.key.get_pressed()
@@ -156,12 +158,6 @@ while running:
     # Draw edges
     draw_edges()
     
-    #for loop to draw set of bricks within the grid
-    for i in range(brick_rows):
-        for j in range(brick_columns):
-            if bricks[i][j] == 1:
-                draw_bricks(bricks_pos_x[i][j], bricks_pos_y[i][j])
-
     # Draw paddle and ball
     draw_paddle(paddle_pos_x, paddle_pos_y)
     pygame.draw.circle(screen, ball_color, (int(ball_pos[0]), int(ball_pos[1])), ball_radius)
