@@ -90,7 +90,7 @@ def move_paddle():
 ball_radius = 20
 ball_color = BLUE
 ball_pos = [width // 2, height // 2]
-angle = random.uniform(20, 160)
+angle = random.uniform(30, 150)
 speed = random.uniform(7, 11)
 velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
 
@@ -116,6 +116,7 @@ def ball_behavior():
         if (paddle_pos_x <= ball_pos[0] <= paddle_pos_x + paddle_width and
                 paddle_pos_y <= ball_pos[1] <= paddle_pos_y + paddle_height):
             velocity[1] = -velocity[1]
+            ball_pos[1] = paddle_pos_y - ball_radius  # Ensure the ball doesn't get stuck in the paddle
 
         # Ball collision detection with bricks
         for row in bricks:
@@ -130,9 +131,7 @@ def ball_behavior():
 
 # Start the ball behavior thread
 running = True
-
 ball_thread = threading.Thread(target=ball_behavior)
-
 ball_thread.start()
 
 # Main loop
@@ -142,16 +141,14 @@ while running:
             running = False
 
     screen.fill(BLACK)
+
     move_paddle()
-    
+
     draw_bricks()
-    
     draw_edges()
-    
     draw_paddle(paddle_pos_x, paddle_pos_y)
-    
     pygame.draw.circle(screen, ball_color, (int(ball_pos[0]), int(ball_pos[1])), ball_radius)
-    
+
     pygame.display.flip()
 
     pygame.time.Clock().tick(frame_rate)
