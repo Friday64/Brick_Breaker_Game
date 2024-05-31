@@ -114,7 +114,7 @@ def ball_behavior():
        
         # Ball collision detection with paddle
         if (paddle_pos_x <= ball_pos[0] <= paddle_pos_x + paddle_width and
-                paddle_pos_y <= ball_pos[1] <= paddle_pos_y + paddle_height):
+                paddle_pos_y - ball_radius <= ball_pos[1] <= paddle_pos_y):
             velocity[1] = -velocity[1]
             ball_pos[1] = paddle_pos_y - ball_radius  # Ensure the ball doesn't get stuck in the paddle
 
