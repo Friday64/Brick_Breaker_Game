@@ -17,6 +17,9 @@ width, height = 1920, 1080
 screen = pygame.display.set_mode((width, height), pygame.DOUBLEBUF | pygame.HWSURFACE)
 pygame.display.set_caption("Brick Breaker")
 
+# Fill the screen with black
+screen.fill(BLACK)
+
 # Edges of the screen
 def draw_edges():
     pygame.draw.rect(screen, WHITE, (0, 0, 10, height), 0)
@@ -28,17 +31,17 @@ def draw_edges():
 paddle_width = 400
 paddle_height = 20
 paddle_pos_y = height - 100
-paddle_pos_x = width
-paddle_speed = 10 
+paddle_pos_x = width // 2 - paddle_width // 2
+paddle_speed = 10
 
-#function to make brick colors random RGB values as a single variable
+# Function to generate random colors
 def random_color():
     r = random.randint(0, 255)
     g = random.randint(0, 255)
     b = random.randint(0, 255)
     return (r, g, b)
 
-#brick settings including random colors
+# Brick settings
 brick_rows = 5
 brick_columns = 10
 brick_width = 100
@@ -46,27 +49,23 @@ brick_height = 50
 brick_spacing = 10
 brick_offset_x = (width - (brick_columns * (brick_width + brick_spacing))) // 2
 brick_offset_y = 50
-random_color = random_color()
 
-#empty array to store bricks, bricks_pos_x and bricks_pos_y are arrays of arrays
+# Generate bricks
 bricks = []
-bricks_pos_x = []
-bricks_pos_y = []
 for i in range(brick_rows):
-    bricks.append([])
-    bricks_pos_x.append([])
-    bricks_pos_y.append([])
+    row = []
     for j in range(brick_columns):
-        bricks[i].append(1)
-        bricks_pos_x[i].append(brick_offset_x + j * (brick_width + brick_spacing))
-        bricks_pos_y[i].append(brick_offset_y + i * (brick_height + brick_spacing))
+        brick_rect = pygame.Rect(brick_offset_x + j * (brick_width + brick_spacing),
+                                 brick_offset_y + i * (brick_height + brick_spacing),
+                                 brick_width, brick_height)
+        row.append({"rect": brick_rect, "color": random_color()})
+    bricks.append(row)
 
-#function to draw bricks on a grid of configured size with random colors
+# Function to draw bricks
 def draw_bricks():
-    for i in range(brick_rows):
-        for j in range(brick_columns):
-            if bricks[i][j] == 1:
-                pygame.draw.rect(screen, random_color, (bricks_pos_x[i][j], bricks_pos_y[i][j], brick_width, brick_height), 0)
+    for row in bricks:
+        for brick in row:
+            pygame.draw.rect(screen, brick["color"], brick["rect"])
 
 # Function to draw the paddle
 def draw_paddle(x, y):
@@ -105,23 +104,26 @@ def ball_behavior():
         ball_pos[0] += velocity[0]
         ball_pos[1] += velocity[1]
   
-        # ball Collision detection with the edges
-        if ball_pos[0] <= 0 or ball_pos[0] >= width - ball_radius:
+        # Ball collision detection with the edges
+        if ball_pos[0] <= ball_radius or ball_pos[0] >= width - ball_radius:
             velocity[0] = -velocity[0]
-        if ball_pos[1] <= 0 or ball_pos[1] >= height - ball_radius:
+        if ball_pos[1] <= ball_radius:
             velocity[1] = -velocity[1]
+        if ball_pos[1] >= height - ball_radius:
+            running = False  # End game if ball hits the bottom edge
        
-        # ball Collision detection with paddle
-        if ball_pos[0] >= paddle_pos_x and ball_pos[0] <= paddle_pos_x + paddle_width and ball_pos[1] >= paddle_pos_y and ball_pos[1] <= paddle_pos_y + paddle_height:
+        # Ball collision detection with paddle
+        if (paddle_pos_x <= ball_pos[0] <= paddle_pos_x + paddle_width and
+                paddle_pos_y <= ball_pos[1] <= paddle_pos_y + paddle_height):
             velocity[1] = -velocity[1]
 
-        # ball Collision detection with bricks
-        for i in range(brick_rows):
-            for j in range(brick_columns):
-                if bricks[i][j] == 1:
-                    if ball_pos[0] >= bricks_pos_x[i][j] and ball_pos[0] <= bricks_pos_x[i][j] + brick_width and ball_pos[1] >= bricks_pos_y[i][j] and ball_pos[1] <= bricks_pos_y[i][j] + brick_height:
-                        bricks[i][j] = 0
-                        velocity[1] = -velocity[1]
+        # Ball collision detection with bricks
+        for row in bricks:
+            for brick in row:
+                if brick["rect"].collidepoint(ball_pos):
+                    row.remove(brick)
+                    velocity[1] = -velocity[1]
+                    break
 
         # Limit the frame rate
         pygame.time.Clock().tick(frame_rate)
@@ -136,36 +138,18 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-    
-    draw_bricks()
 
-    # Get keys pressed
-    keys = pygame.key.get_pressed()
-    if keys[pygame.K_LEFT]or keys[pygame.K_a]:
-        paddle_pos_x -= 10
-    if keys[pygame.K_RIGHT]or keys[pygame.K_d]:
-        paddle_pos_x += 10
-
-    # Make sure the paddle doesn't go off screen
-    if paddle_pos_x < 0:
-        paddle_pos_x = 0
-    if paddle_pos_x > width - paddle_width:
-        paddle_pos_x = width - paddle_width
-
-    # Fill the screen with black
     screen.fill(BLACK)
 
-    # Draw edges
+    move_paddle()
+
+    draw_bricks()
     draw_edges()
-    
-    # Draw paddle and ball
     draw_paddle(paddle_pos_x, paddle_pos_y)
     pygame.draw.circle(screen, ball_color, (int(ball_pos[0]), int(ball_pos[1])), ball_radius)
 
-    # Update the display
     pygame.display.flip()
 
-    # Limit the frame rate
     pygame.time.Clock().tick(frame_rate)
 
 # Quit Pygame and exit the thread
