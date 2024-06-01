@@ -29,7 +29,7 @@ def draw_edges():
 # Paddle settings
 paddle_width = 400
 paddle_height = 20
-paddle_pos_y = height - 100
+paddle_pos_y = height - 200
 paddle_pos_x = width // 2 - paddle_width // 2
 paddle_speed = 10
 
@@ -139,7 +139,7 @@ while running:
     draw_bricks()
     draw_edges()
     ball_behavior()
-    
+
     pygame.draw.circle(screen, ball_color, (int(ball_pos[0]), int(ball_pos[1])), ball_radius)
 
     pygame.display.flip()
