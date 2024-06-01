@@ -1,6 +1,5 @@
 import pygame
 import sys
-import threading
 import random
 import math
 
@@ -99,42 +98,35 @@ frame_rate = 75  # Adjustable frame rate
 
 def ball_behavior():
     global ball_pos, velocity, running
-    while running:
-        # Move the ball
-        ball_pos[0] += velocity[0]
-        ball_pos[1] += velocity[1]
-  
-        # Ball collision detection with the edges
-        if ball_pos[0] <= ball_radius or ball_pos[0] >= width - ball_radius:
-            velocity[0] = -velocity[0]
-        if ball_pos[1] <= ball_radius:
-            velocity[1] = -velocity[1]
-        if ball_pos[1] >= height - ball_radius:
-            running = False  # End game if ball hits the bottom edge
-       
-        # Ball collision detection with paddle
-        if (paddle_pos_x <= ball_pos[0] <= paddle_pos_x + paddle_width and
-                paddle_pos_y - ball_radius <= ball_pos[1] <= paddle_pos_y):
-            velocity[1] = -velocity[1]
-            ball_pos[1] = paddle_pos_y - ball_radius  # Ensure the ball doesn't get stuck in the paddle
 
-        # Ball collision detection with bricks
-        for row in bricks:
-            for brick in row:
-                if brick["rect"].collidepoint(ball_pos):
-                    row.remove(brick)
-                    velocity[1] = -velocity[1]
-                    break
+    # Move the ball
+    ball_pos[0] += velocity[0]
+    ball_pos[1] += velocity[1]
 
-        # Limit the frame rate
-        pygame.time.Clock().tick(frame_rate)
+    # Ball collision detection with the edges
+    if ball_pos[0] <= ball_radius or ball_pos[0] >= width - ball_radius:
+        velocity[0] = -velocity[0]
+    if ball_pos[1] <= ball_radius:
+        velocity[1] = -velocity[1]
+    if ball_pos[1] >= height - ball_radius:
+        running = False  # End game if ball hits the bottom edge
 
-# Start the ball behavior thread
-running = True
-ball_thread = threading.Thread(target=ball_behavior)
-ball_thread.start()
+    # Ball collision detection with paddle
+    if (paddle_pos_x <= ball_pos[0] <= paddle_pos_x + paddle_width and
+            paddle_pos_y - ball_radius <= ball_pos[1] <= paddle_pos_y):
+        velocity[1] = -velocity[1]
+        ball_pos[1] = paddle_pos_y - ball_radius  # Ensure the ball doesn't get stuck in the paddle
+
+    # Ball collision detection with bricks
+    for row in bricks:
+        for brick in row:
+            if brick["rect"].collidepoint(ball_pos):
+                row.remove(brick)
+                velocity[1] = -velocity[1]
+                break
 
 # Main loop
+running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -143,6 +135,7 @@ while running:
     screen.fill(BLACK)
 
     move_paddle()
+    ball_behavior()
 
     draw_bricks()
     draw_edges()
@@ -153,8 +146,6 @@ while running:
 
     pygame.time.Clock().tick(frame_rate)
 
-# Quit Pygame and exit the thread
-running = False
-ball_thread.join()
+# Quit Pygame
 pygame.quit()
 sys.exit()
