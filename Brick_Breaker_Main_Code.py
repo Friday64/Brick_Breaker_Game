@@ -133,13 +133,13 @@ while running:
             running = False
 
     screen.fill(BLACK)
-
+    
+    draw_paddle(paddle_pos_x, paddle_pos_y)
     move_paddle()
-    ball_behavior()
-
     draw_bricks()
     draw_edges()
-    draw_paddle(paddle_pos_x, paddle_pos_y)
+    ball_behavior()
+    
     pygame.draw.circle(screen, ball_color, (int(ball_pos[0]), int(ball_pos[1])), ball_radius)
 
     pygame.display.flip()
