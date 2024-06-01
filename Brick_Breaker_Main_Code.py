@@ -6,8 +6,16 @@ import math
 # Initialize Pygame
 pygame.init()
 
-#Start time delay for game
+#Start time delay function for game
 pygame.time.delay(2000)
+
+#add Countdown timer on black screen for 5 seconds on game start when a button is pressed then clear screen
+def countdown_timer():
+    countdown = 5
+    while countdown > 0:
+        print(countdown)
+        countdown -= 1
+        pygame.time.delay(1000)
 
 # Define colors
 BLACK = (0, 0, 0)
@@ -135,8 +143,8 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
+    countdown_timer()
     screen.fill(BLACK)
-    
     draw_paddle(paddle_pos_x, paddle_pos_y)
     move_paddle()
     draw_bricks()
