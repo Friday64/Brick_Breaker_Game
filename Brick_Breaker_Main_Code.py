@@ -6,6 +6,9 @@ import math
 # Initialize Pygame
 pygame.init()
 
+# Frame rate setup
+frame_rate = 75  # Adjustable frame rate
+
 # Colors for the game text
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -116,9 +119,6 @@ angle = random.uniform(30, 150)
 speed = random.uniform(7, 11)
 velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
 
-# Frame rate setup
-frame_rate = 75  # Adjustable frame rate
-
 def ball_behavior():
     global ball_pos, velocity, running
 
@@ -148,25 +148,23 @@ def ball_behavior():
                 velocity[1] = -velocity[1]
                 break
 
-# Main loop
+
+countdown_timer()
 running = True
+# Main loop
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
-    countdown_timer()
     screen.fill(BLACK)
     draw_paddle(paddle_pos_x, paddle_pos_y)
     move_paddle()
     draw_bricks()
     draw_edges()
     ball_behavior()
-
     pygame.draw.circle(screen, ball_color, (int(ball_pos[0]), int(ball_pos[1])), ball_radius)
-
     pygame.display.flip()
-
     pygame.time.Clock().tick(frame_rate)
 
 # Quit Pygame
