@@ -41,8 +41,6 @@ def countdown_timer():
   #end function here
   return
 
-# Fill the screen with black
-screen.fill(BLACK)
 
 # Edges of the screen
 def draw_edges():
