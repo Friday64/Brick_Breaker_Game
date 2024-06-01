@@ -12,6 +12,11 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 
+# Screen dimensions and settings
+width, height = 1920, 1080
+screen = pygame.display.set_mode((width, height), pygame.DOUBLEBUF | pygame.HWSURFACE)
+pygame.display.set_caption("Brick Breaker")
+
 # add Countdown timer function on black screen for 5 seconds on game start when a button is pressed then clear screen
 def countdown_timer():
   #display timer on black screen using fullscreen pygame text
@@ -35,18 +40,6 @@ def countdown_timer():
 
   #end function here
   return
- 
-  
-
-
-
-
-
-
-# Screen dimensions and settings
-width, height = 1920, 1080
-screen = pygame.display.set_mode((width, height), pygame.DOUBLEBUF | pygame.HWSURFACE)
-pygame.display.set_caption("Brick Breaker")
 
 # Fill the screen with black
 screen.fill(BLACK)
