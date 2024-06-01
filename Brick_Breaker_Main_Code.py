@@ -6,21 +6,42 @@ import math
 # Initialize Pygame
 pygame.init()
 
-#Start time delay function for game
-pygame.time.delay(2000)
-
-#add Countdown timer on black screen for 5 seconds on game start when a button is pressed then clear screen
-def countdown_timer():
-    countdown = 5
-    while countdown > 0:
-        print(countdown)
-        countdown -= 1
-        pygame.time.delay(1000)
-
-# Define colors
+# Colors for the game text
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+RED = (255, 0, 0)
 BLUE = (0, 0, 255)
+
+# add Countdown timer function on black screen for 5 seconds on game start when a button is pressed then clear screen
+def countdown_timer():
+  #display timer on black screen using fullscreen pygame text
+  screen.fill(BLACK)
+  font = pygame.font.SysFont(None, 48)
+  text = font.render("3", 1, WHITE)
+  screen.blit(text, (width // 2 - text.get_width() // 2, height // 2 - text.get_height() // 2))
+  
+  #Display text saying "Game will start when any key is pressed" and then start 5 second countdown timer on screen when key is pressed
+  pygame.display.flip()
+  pygame.time.delay(5000)
+  screen.fill(BLACK)
+  text = font.render("Game will start in 5 seconds", 1, WHITE)
+  screen.blit(text, (width // 2 - text.get_width() // 2, height // 2 - text.get_height() // 2))
+  pygame.display.flip()
+  pygame.time.delay(5000)
+
+  #clear screen
+  screen.fill(BLACK)
+  pygame.display.flip()
+
+  #end function here
+  return
+ 
+  
+
+
+
+
+
 
 # Screen dimensions and settings
 width, height = 1920, 1080
