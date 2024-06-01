@@ -6,6 +6,9 @@ import math
 # Initialize Pygame
 pygame.init()
 
+#Start time delay for game
+pygame.time.delay(2000)
+
 # Define colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
