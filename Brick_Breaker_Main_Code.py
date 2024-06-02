@@ -44,7 +44,6 @@ def countdown_timer():
   #end function here
   return
 
-
 # Edges of the screen
 def draw_edges():
     pygame.draw.rect(screen, WHITE, (0, 0, 10, height), 0)
@@ -147,7 +146,6 @@ def ball_behavior():
                 row.remove(brick)
                 velocity[1] = -velocity[1]
                 break
-
 
 countdown_timer()
 running = True
