@@ -20,6 +20,13 @@ width, height = 1920, 1080
 screen = pygame.display.set_mode((width, height), pygame.DOUBLEBUF | pygame.HWSURFACE)
 pygame.display.set_caption("Brick Breaker")
 
+# Edges of the screen
+def draw_edges():
+    pygame.draw.rect(screen, WHITE, (0, 0, 10, height), 0)
+    pygame.draw.rect(screen, WHITE, (width - 10, 0, 10, height), 0)
+    pygame.draw.rect(screen, WHITE, (0, 0, width, 10), 0)
+    pygame.draw.rect(screen, WHITE, (0, height - 10, width, 10), 0)
+
 # add Countdown timer function on black screen for 5 seconds on game start when a button is pressed then clear screen
 def countdown_timer():
   #display timer on black screen using fullscreen pygame text
@@ -44,6 +51,7 @@ def countdown_timer():
   #end function here
   return
 
+<<<<<<< Updated upstream
 # Edges of the screen
 def draw_edges():
     pygame.draw.rect(screen, WHITE, (0, 0, 10, height), 0)
@@ -51,6 +59,8 @@ def draw_edges():
     pygame.draw.rect(screen, WHITE, (0, 0, width, 10), 0)
     pygame.draw.rect(screen, WHITE, (0, height - 10, width, 10), 0)
 
+=======
+>>>>>>> Stashed changes
 # Paddle settings
 paddle_width = 400
 paddle_height = 20
