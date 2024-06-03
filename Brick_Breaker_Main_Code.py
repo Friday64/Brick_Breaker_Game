@@ -9,14 +9,14 @@ pygame.init()
 # Frame rate setup
 frame_rate = 75  # Adjustable frame rate
 
+#set number of tries to 3
+tries = 3
+
 # Colors for the game text
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
-
-#set number of tries to 3
-tries = 3
 
 #draw number of tries on right hand side of screen while game is running
 def draw_tries(tries):
@@ -104,7 +104,7 @@ angle = random.uniform(30, 150)
 speed = random.uniform(7, 11)
 velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
 
-def ball_behavior():
+def ball_behavior(tries):
     global ball_pos, velocity, running
 
     # Move the ball
@@ -112,17 +112,14 @@ def ball_behavior():
     ball_pos[1] += velocity[1]
 
     # Ball collision detection with the edges
-    while tries > 0:
-        if ball_pos[0] <= ball_radius or ball_pos[0] >= width - ball_radius:
-            velocity[0] = -velocity[0]
-        if ball_pos[1] <= ball_radius:
+    if ball_pos[0] <= ball_radius or ball_pos[0] >= width - ball_radius:
+        velocity[0] = -velocity[0]
+    if ball_pos[1] <= ball_radius:
             velocity[1] = -velocity[1]
-        if ball_pos[1] >= height - ball_radius:
+    if ball_pos[1] >= height - ball_radius and tries > 0:
             tries = tries - 1
-        elif tries == 0:
-            running = False
-            break
-
+    elif tries == 0:
+        running = False
         
     # Ball collision detection with paddle
     if (paddle_pos_x <= ball_pos[0] <= paddle_pos_x + paddle_width and
@@ -150,7 +147,7 @@ while running:
     move_paddle()
     draw_bricks()
     draw_edges()
-    ball_behavior()
+    ball_behavior(tries)
     pygame.draw.circle(screen, ball_color, (int(ball_pos[0]), int(ball_pos[1])), ball_radius)
     pygame.display.flip()
     pygame.time.Clock().tick(frame_rate)
