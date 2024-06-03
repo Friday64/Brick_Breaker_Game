@@ -15,52 +15,28 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 
+#set number of tries to 3
+tries = 3
+
+#draw number of tries on right hand side of screen while game is running
+def draw_tries(tries):
+    font = pygame.font.SysFont(None, 50)
+    text = font.render("Tries: " + str(tries), True, WHITE)
+    screen.blit(text, (width - 300, 20))
+    return
+
 # Screen dimensions and settings
 width, height = 1920, 1080
 screen = pygame.display.set_mode((width, height), pygame.DOUBLEBUF | pygame.HWSURFACE)
 pygame.display.set_caption("Brick Breaker")
 
-# Edges of the screen
+# Draw Edges of the screen
 def draw_edges():
     pygame.draw.rect(screen, WHITE, (0, 0, 10, height), 0)
     pygame.draw.rect(screen, WHITE, (width - 10, 0, 10, height), 0)
     pygame.draw.rect(screen, WHITE, (0, 0, width, 10), 0)
     pygame.draw.rect(screen, WHITE, (0, height - 10, width, 10), 0)
 
-# add Countdown timer function on black screen for 5 seconds on game start when a button is pressed then clear screen
-def countdown_timer():
-  #display timer on black screen using fullscreen pygame text
-  screen.fill(BLACK)
-  font = pygame.font.SysFont(None, 48)
-  text = font.render("3", 1, WHITE)
-  screen.blit(text, (width // 2 - text.get_width() // 2, height // 2 - text.get_height() // 2))
-  
-  #Display text saying "Game will start when any key is pressed" and then start 5 second countdown timer on screen when key is pressed
-  pygame.display.flip()
-  pygame.time.delay(5000)
-  screen.fill(BLACK)
-  text = font.render("Game will start in 5 seconds", 1, WHITE)
-  screen.blit(text, (width // 2 - text.get_width() // 2, height // 2 - text.get_height() // 2))
-  pygame.display.flip()
-  pygame.time.delay(5000)
-
-  #clear screen
-  screen.fill(BLACK)
-  pygame.display.flip()
-
-  #end function here
-  return
-
-<<<<<<< Updated upstream
-# Edges of the screen
-def draw_edges():
-    pygame.draw.rect(screen, WHITE, (0, 0, 10, height), 0)
-    pygame.draw.rect(screen, WHITE, (width - 10, 0, 10, height), 0)
-    pygame.draw.rect(screen, WHITE, (0, 0, width, 10), 0)
-    pygame.draw.rect(screen, WHITE, (0, height - 10, width, 10), 0)
-
-=======
->>>>>>> Stashed changes
 # Paddle settings
 paddle_width = 400
 paddle_height = 20
@@ -136,13 +112,18 @@ def ball_behavior():
     ball_pos[1] += velocity[1]
 
     # Ball collision detection with the edges
-    if ball_pos[0] <= ball_radius or ball_pos[0] >= width - ball_radius:
-        velocity[0] = -velocity[0]
-    if ball_pos[1] <= ball_radius:
-        velocity[1] = -velocity[1]
-    if ball_pos[1] >= height - ball_radius:
-        running = False  # End game if ball hits the bottom edge
+    while tries > 0:
+        if ball_pos[0] <= ball_radius or ball_pos[0] >= width - ball_radius:
+            velocity[0] = -velocity[0]
+        if ball_pos[1] <= ball_radius:
+            velocity[1] = -velocity[1]
+        if ball_pos[1] >= height - ball_radius:
+            tries = tries - 1
+        elif tries == 0:
+            running = False
+            break
 
+        
     # Ball collision detection with paddle
     if (paddle_pos_x <= ball_pos[0] <= paddle_pos_x + paddle_width and
             paddle_pos_y - ball_radius <= ball_pos[1] <= paddle_pos_y):
@@ -156,16 +137,15 @@ def ball_behavior():
                 row.remove(brick)
                 velocity[1] = -velocity[1]
                 break
-
-countdown_timer()
+#main loop
 running = True
-# Main loop
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
 
     screen.fill(BLACK)
+    draw_tries(tries)
     draw_paddle(paddle_pos_x, paddle_pos_y)
     move_paddle()
     draw_bricks()
