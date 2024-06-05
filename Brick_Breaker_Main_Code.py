@@ -100,7 +100,7 @@ ball_radius = 20
 ball_color = BLUE
 ball_pos = [width // 2, height // 2]
 angle = random.uniform(30, 150)
-speed = random.uniform(7, 11)
+speed = random.uniform(7, 13)
 velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
 
 def ball_behavior():
