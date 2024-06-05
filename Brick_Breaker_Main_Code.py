@@ -9,7 +9,7 @@ pygame.init()
 # Frame rate setup
 frame_rate = 75  # Adjustable frame rate
 
-#set number of tries to 3
+# Set number of tries to 3
 tries = 3
 
 # Colors for the game text
@@ -18,19 +18,18 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 
-#draw number of tries on right hand side of screen while game is running
+# Draw number of tries on the right-hand side of the screen while the game is running
 def draw_tries(tries):
     font = pygame.font.SysFont(None, 50)
     text = font.render("Tries: " + str(tries), True, WHITE)
     screen.blit(text, (width - 300, 20))
-    return
 
 # Screen dimensions and settings
 width, height = 1920, 1080
 screen = pygame.display.set_mode((width, height), pygame.DOUBLEBUF | pygame.HWSURFACE)
 pygame.display.set_caption("Brick Breaker")
 
-# Draw Edges of the screen
+# Draw edges of the screen
 def draw_edges():
     pygame.draw.rect(screen, WHITE, (0, 0, 10, height), 0)
     pygame.draw.rect(screen, WHITE, (width - 10, 0, 10, height), 0)
@@ -104,23 +103,35 @@ angle = random.uniform(30, 150)
 speed = random.uniform(7, 11)
 velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
 
-def ball_behavior(tries):
-    global ball_pos, velocity, running
-
-    # Move the ball
-    ball_pos[0] += velocity[0]
-    ball_pos[1] += velocity[1]
-
-    # Ball collision detection with the edges
+def ball_behavior():
+    global ball_pos, velocity, running, tries
+    
     if ball_pos[0] <= ball_radius or ball_pos[0] >= width - ball_radius:
         velocity[0] = -velocity[0]
+
     if ball_pos[1] <= ball_radius:
-            velocity[1] = -velocity[1]
-    if ball_pos[1] >= height - ball_radius and tries > 0:
-            tries = tries - 1
-    elif tries == 0:
-        running = False
-        
+        velocity[1] = -velocity[1]
+
+    if ball_pos[1] >= height - ball_radius:
+        if tries > 0:
+            # Reset ball position
+            ball_pos = [width // 2, height // 2]
+            angle = random.uniform(30, 150)
+            speed = random.uniform(7, 11)
+            velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
+
+            # Reset velocity
+            running = True
+
+            tries -= 1
+
+            # Update tries on screen
+            draw_tries(tries)
+        elif tries == 0:
+            # Draw tries on screen
+            draw_tries(tries)
+            running = False
+
     # Ball collision detection with paddle
     if (paddle_pos_x <= ball_pos[0] <= paddle_pos_x + paddle_width and
             paddle_pos_y - ball_radius <= ball_pos[1] <= paddle_pos_y):
@@ -134,7 +145,8 @@ def ball_behavior(tries):
                 row.remove(brick)
                 velocity[1] = -velocity[1]
                 break
-#main loop
+
+# Main loop
 running = True
 while running:
     for event in pygame.event.get():
@@ -147,7 +159,12 @@ while running:
     move_paddle()
     draw_bricks()
     draw_edges()
-    ball_behavior(tries)
+    ball_behavior()
+    
+    # Update ball position
+    ball_pos[0] += velocity[0]
+    ball_pos[1] += velocity[1]
+    
     pygame.draw.circle(screen, ball_color, (int(ball_pos[0]), int(ball_pos[1])), ball_radius)
     pygame.display.flip()
     pygame.time.Clock().tick(frame_rate)
