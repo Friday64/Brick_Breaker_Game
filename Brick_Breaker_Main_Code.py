@@ -106,13 +106,18 @@ velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians
 def ball_behavior():
     global ball_pos, velocity, running, tries
     
-    # Bounce off the left and right edges using not statements
-    if not (ball_radius < ball_pos[0] < width - ball_radius):
+    # Bounce off the left and right edges
+    if ball_pos[0] - ball_radius <= 0 or ball_pos[0] + ball_radius >= width:
         velocity[0] = -velocity[0]
+        if ball_pos[0] - ball_radius <= 0:
+            ball_pos[0] = ball_radius
+        if ball_pos[0] + ball_radius >= width:
+            ball_pos[0] = width - ball_radius
 
     # Bounce off the top edge
     if ball_pos[1] - ball_radius <= 0:
         velocity[1] = -velocity[1]
+        ball_pos[1] = ball_radius
 
     # Ball falls below the bottom edge
     if ball_pos[1] + ball_radius >= height:
