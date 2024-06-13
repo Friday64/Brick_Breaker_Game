@@ -115,11 +115,15 @@ def ball_behavior(tries):
     if ball_pos[0] <= ball_radius or ball_pos[0] >= width - ball_radius:
         velocity[0] = -velocity[0]
     if ball_pos[1] <= ball_radius:
-            velocity[1] = -velocity[1]
-    if ball_pos[1] >= height - ball_radius and tries > 0:
-            tries = tries - 1
-    elif tries == 0:
+        velocity[1] = -velocity[1]
+    if ball_pos[1] >= height - ball_radius:
+        tries = tries - 1
+        pygame.restart()
+        
+    elif ball_pos[1] >= height - ball_radius and tries == 0:
+        #end the game if the tries are 0
         running = False
+       
         
     # Ball collision detection with paddle
     if (paddle_pos_x <= ball_pos[0] <= paddle_pos_x + paddle_width and
