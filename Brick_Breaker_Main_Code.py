@@ -31,10 +31,12 @@ pygame.display.set_caption("Brick Breaker")
 
 # Draw edges of the screen
 def draw_edges():
-    pygame.draw.rect(screen, WHITE, (0, 0, 10, height), 0)
-    pygame.draw.rect(screen, WHITE, (width - 10, 0, 10, height), 0)
-    pygame.draw.rect(screen, WHITE, (0, 0, width, 10), 0)
-    pygame.draw.rect(screen, WHITE, (0, height - 10, width, 10), 0)
+    edge_thickness = 10
+    edge_color = (255, 255, 255, 128)  # White with transparency
+    pygame.draw.rect(screen, edge_color, (0, 0, edge_thickness, height), 0)
+    pygame.draw.rect(screen, edge_color, (width - edge_thickness, 0, edge_thickness, height), 0)
+    pygame.draw.rect(screen, edge_color, (0, 0, width, edge_thickness), 0)
+    pygame.draw.rect(screen, edge_color, (0, height - edge_thickness, width, edge_thickness), 0)
 
 # Paddle settings
 paddle_width = 400
@@ -165,11 +167,11 @@ while running:
     draw_bricks()
     draw_edges()
     ball_behavior()
-    
+
     # Update ball position
     ball_pos[0] += velocity[0]
     ball_pos[1] += velocity[1]
-    
+
     pygame.draw.circle(screen, ball_color, (int(ball_pos[0]), int(ball_pos[1])), ball_radius)
     pygame.display.flip()
     pygame.time.Clock().tick(frame_rate)
