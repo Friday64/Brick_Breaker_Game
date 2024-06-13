@@ -105,19 +105,19 @@ velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians
 
 def ball_behavior():
     global ball_pos, velocity, running, tries
-    
+
     # Bounce off the left and right edges
-    if ball_pos[0] - ball_radius <= 0 or ball_pos[0] + ball_radius >= width:
+    if ball_pos[0] - ball_radius <= 0:
+        ball_pos[0] = ball_radius
         velocity[0] = -velocity[0]
-        if ball_pos[0] - ball_radius <= 0:
-            ball_pos[0] = ball_radius
-        if ball_pos[0] + ball_radius >= width:
-            ball_pos[0] = width - ball_radius
+    elif ball_pos[0] + ball_radius >= width:
+        ball_pos[0] = width - ball_radius
+        velocity[0] = -velocity[0]
 
     # Bounce off the top edge
     if ball_pos[1] - ball_radius <= 0:
-        velocity[1] = -velocity[1]
         ball_pos[1] = ball_radius
+        velocity[1] = -velocity[1]
 
     # Ball falls below the bottom edge
     if ball_pos[1] + ball_radius >= height:
@@ -127,9 +127,6 @@ def ball_behavior():
             angle = random.uniform(30, 150)
             speed = random.uniform(7, 11)
             velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
-
-            # Reset velocity
-            running = True
 
             tries -= 1
 
