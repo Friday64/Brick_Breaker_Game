@@ -7,7 +7,7 @@ It's a good practice to use a virtual environment to manage dependencies. Naviga
 sh
 Copy code
 python3.12 -m venv venv
-source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+On Windows, use `venv\Scripts\activate`
 Install dependencies:
 
 With your virtual environment activated, install the dependencies using the requirements.txt file:
