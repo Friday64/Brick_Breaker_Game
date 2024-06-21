@@ -15,6 +15,9 @@ frame_rate = 75  # Adjustable frame rate
 # Set number of tries to 3
 tries = 3
 
+#score
+score = 0
+
 # Colors for the game text
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -26,6 +29,11 @@ def draw_tries(tries):
     font = pygame.font.SysFont(None, 50)
     text = font.render("Tries: " + str(tries), True, WHITE)
     screen.blit(text, (width - 300, 20))
+
+def draw_score(score):
+    font = pygame.font.SysFont(None, 50)
+    text = font.render("Score: " + str(score), True, WHITE)
+    screen.blit(text, (width - 300, 60))
 
 # Screen dimensions and settings
 width, height = 1920, 1080
@@ -154,6 +162,11 @@ def ball_behavior():
             if brick["rect"].collidepoint(ball_pos):
                 row.remove(brick)
                 velocity[1] = -velocity[1]
+
+                score += 1
+
+                # Update score on screen
+                draw_score(score)
                 break
 
 # Main loop
