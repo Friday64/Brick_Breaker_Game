@@ -29,12 +29,6 @@ def draw_tries(tries):
     font = pygame.font.SysFont(None, 50)
     text = font.render("Tries: " + str(tries), True, WHITE)
     screen.blit(text, (width - 300, 20))
-
-# Draw score on left-hand side of the screen while the game is running
-def draw_score(score):
-    font = pygame.font.SysFont(None, 50)
-    text = font.render("Score: " + str(score), True, WHITE)
-    screen.blit(text, (width - 300, 60))
     
 # Screen dimensions and settings
 width, height = 1920, 1080
@@ -163,9 +157,6 @@ def ball_behavior():
             if brick["rect"].collidepoint(ball_radius + ball_pos[0], ball_pos[1]):
                 row.remove(brick)
                 velocity[1] = -velocity[1]
-                score += 1
-                # Update score on screen
-                draw_score(score)
                 break
 
 # Main loop
