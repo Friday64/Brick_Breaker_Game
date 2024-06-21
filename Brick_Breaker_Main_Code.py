@@ -160,7 +160,7 @@ def ball_behavior():
     # Ball collision detection with bricks
     for row in bricks:
         for brick in row:
-            if brick["rect"].collidepoint(ball_radius):
+            if brick["rect"].collidepoint(ball_radius + ball_pos[0], ball_pos[1]):
                 row.remove(brick)
                 velocity[1] = -velocity[1]
                 score += 1
