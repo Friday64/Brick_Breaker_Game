@@ -1,4 +1,7 @@
+#non-system libraries
 import pygame
+
+#system libraries
 import sys
 import random
 import math
