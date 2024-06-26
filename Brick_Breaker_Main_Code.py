@@ -18,6 +18,7 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 GREEN = (0, 255, 0)
+YELLOW = (255, 255, 0)  # Color for the new power-up
 
 # Frame rate setup
 frame_rate = settings.frame_rate  # Adjustable frame rate
@@ -35,6 +36,12 @@ current_level = 1
 # Multiball settings
 multiball_active = False
 multiball_powerup = None
+
+# Paddle size increase power-up settings
+paddle_size_powerup = None
+paddle_size_increase_active = False
+paddle_size_increase_timer = 0
+paddle_size_increase_duration = 5000  # Duration in milliseconds
 
 # Global variables for ball settings
 ball_radius = settings.ball_radius
@@ -82,6 +89,12 @@ def generate_multiball_powerup():
     y = 0  # Start at the top of the screen
     return {"rect": pygame.Rect(x, y, 30, 30), "color": GREEN, "speed": 5}
 
+# Function to generate a paddle size increase power-up
+def generate_paddle_size_powerup():
+    x = random.randint(100, settings.width - 100)
+    y = 0  # Start at the top of the screen
+    return {"rect": pygame.Rect(x, y, 30, 30), "color": YELLOW, "speed": 5}
+
 # Function to draw edges of the screen
 def draw_edges():
     edge_thickness = 10
@@ -126,6 +139,11 @@ def draw_multiball_powerup(powerup):
     if powerup:
         pygame.draw.rect(screen, powerup["color"], powerup["rect"])
 
+# Function to draw the paddle size increase power-up
+def draw_paddle_size_powerup(powerup):
+    if powerup:
+        pygame.draw.rect(screen, powerup["color"], powerup["rect"])
+
 # Function to move the paddle
 def move_paddle():
     global paddle_pos_x
@@ -142,7 +160,7 @@ def move_paddle():
         paddle_pos_x = settings.width - paddle_width
 
 def ball_behavior():
-    global running, tries, score, current_level, bricks, multiball_active, balls, multiball_powerup
+    global running, tries, score, current_level, bricks, multiball_active, balls, multiball_powerup, paddle_size_powerup, paddle_size_increase_active, paddle_size_increase_timer, paddle_width
 
     for ball in balls:
         ball_pos = ball["pos"]
@@ -205,6 +223,9 @@ def ball_behavior():
     if multiball_powerup:
         multiball_powerup["rect"].y += multiball_powerup["speed"]
 
+    if paddle_size_powerup:
+        paddle_size_powerup["rect"].y += paddle_size_powerup["speed"]
+
     # Check for collision with multiball power-up
     if multiball_powerup and multiball_powerup["rect"].colliderect(paddle_pos_x, paddle_pos_y, paddle_width, paddle_height):
         multiball_active = True
@@ -214,6 +235,18 @@ def ball_behavior():
             speed = random.uniform(7, 13)
             new_velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
             balls.append({"pos": ball_pos.copy(), "velocity": new_velocity})
+
+    # Check for collision with paddle size increase power-up
+    if paddle_size_powerup and paddle_size_powerup["rect"].colliderect(paddle_pos_x, paddle_pos_y, paddle_width, paddle_height):
+        paddle_size_increase_active = True
+        paddle_size_powerup = None
+        paddle_width *= 1.5  # Increase the paddle size by 50%
+        paddle_size_increase_timer = pygame.time.get_ticks()  # Start the timer
+
+    # Reset paddle size after power-up effect duration
+    if paddle_size_increase_active and pygame.time.get_ticks() - paddle_size_increase_timer > paddle_size_increase_duration:
+        paddle_size_increase_active = False
+        paddle_width = settings.paddle_width  # Reset to original size
 
     # Check if all bricks are cleared
     if all(all(brick is None for brick in row) for row in bricks):
@@ -255,7 +288,7 @@ def game_over_screen():
                 start_game()
 
 def start_game():
-    global running, tries, score, ball_pos, velocity, bricks, current_level, multiball_active, multiball_powerup, balls, angle, speed
+    global running, tries, score, ball_pos, velocity, bricks, current_level, multiball_active, multiball_powerup, paddle_size_powerup, paddle_size_increase_active, paddle_size_increase_timer, balls, angle, speed
 
     # Reset tries, score, level, and ball position
     tries = 3
@@ -271,6 +304,8 @@ def start_game():
     bricks = generate_bricks(current_level)
     multiball_active = False
     multiball_powerup = None
+    paddle_size_powerup = None
+    paddle_size_increase_active = False
 
     running = True
 
@@ -290,7 +325,10 @@ def start_game():
         draw_edges()
         if not multiball_active and random.random() < 0.001:  # Low probability to generate power-up
             multiball_powerup = generate_multiball_powerup()
+        if not paddle_size_powerup and random.random() < 0.001:  # Low probability to generate power-up
+            paddle_size_powerup = generate_paddle_size_powerup()
         draw_multiball_powerup(multiball_powerup)
+        draw_paddle_size_powerup(paddle_size_powerup)
         ball_behavior()
 
         for ball in balls:
