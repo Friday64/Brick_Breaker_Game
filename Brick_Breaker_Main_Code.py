@@ -43,7 +43,7 @@ brick_height = 50
 brick_spacing = 10
 brick_offset_x = (width - (brick_columns * (brick_width + brick_spacing))) // 2
 brick_offset_y = 50
-
+num_bricks = brick_rows * brick_columns
 # Generate bricks
 def generate_bricks():
     bricks = []
@@ -214,7 +214,11 @@ def start_game():
         draw_bricks(bricks)
         draw_edges()
         ball_behavior()
-
+    
+        if num_bricks == 0:
+            running = False
+            game_over_screen()
+        
         # Update ball position
         ball_pos[0] += velocity[0]
         ball_pos[1] += velocity[1]
