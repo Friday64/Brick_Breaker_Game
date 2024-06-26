@@ -163,12 +163,14 @@ def game_over_screen():
     screen.fill(BLACK)
     
     font = pygame.font.SysFont(None, 50)
-    text = font.render("Game Over", True, WHITE)
-    screen.blit(text, (width // 2 - 100, height // 2 - 50))
-    text = font.render("Score: " + str(score), True, WHITE)
-    screen.blit(text, (width // 2 - 50, height // 2))
-    text = font.render("Press Enter to Restart", True, WHITE)
-    screen.blit(text, (width // 2 - 150, height // 2 + 50))
+    texts = ["Game Over", f"Score: {score}", "Press Enter to Restart"]
+    y_offset = height // 2 - 100  # Start a bit higher on the screen
+
+    for text in texts:
+        rendered_text = font.render(text, True, WHITE)
+        text_rect = rendered_text.get_rect(center=(width // 2, y_offset))
+        screen.blit(rendered_text, text_rect)
+        y_offset += 100  # Move down for the next line of text
 
     pygame.display.update()
     
