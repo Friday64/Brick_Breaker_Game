@@ -21,7 +21,7 @@ BLUE = (0, 0, 255)
 # Frame rate setup
 frame_rate = 75  # Adjustable frame rate
 
-# Paddle settings
+# Paddle settings   
 paddle_width = 400
 paddle_height = 20
 paddle_pos_y = height - 200
