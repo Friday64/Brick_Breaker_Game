@@ -141,14 +141,27 @@ def ball_behavior():
             velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
 
             tries -= 1
-
-            # Update tries on screen
-            draw_tries(tries)
         
         elif tries == 0:
-            # Draw tries on screen
-            draw_tries(tries)
             running = False
+            #clear screen
+            screen.fill(BLACK)
+            #display score and game over in center of screen
+            font = pygame.font.SysFont(None, 50)
+            text = font.render("Game Over", True, WHITE)
+            screen.blit(text, (width // 2 - text.get_width() // 2, height // 2 - text.get_height() // 2))
+            text = font.render("Score: " + str(score), True, WHITE)
+            screen.blit(text, (width // 2 - text.get_width() // 2, height // 2 + text.get_height() // 2))
+            pygame.display.flip()
+            #freeze screen until user click on x button
+            while True:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        sys.exit()
+                pygame.time.wait(1000)
+
+            sys.exit()
 
     # Ball collision detection with paddle
     if (paddle_pos_x <= ball_pos[0] <= paddle_pos_x + paddle_width and
@@ -162,7 +175,7 @@ def ball_behavior():
             #brick collision with ball(when brick_dianameter touches ball)
             if (brick["rect"].colliderect(ball_pos[0] - ball_radius, ball_pos[1] - ball_radius, 2 * ball_radius, 2 * ball_radius)):
                 row.remove(brick)
-                score += 10
+                score + 10
                 velocity[1] = -velocity[1]
                 break
 
@@ -196,6 +209,8 @@ def start_game():
                 running = False
 
         screen.fill(BLACK)
+        draw_score(score)
+        draw_tries(tries)
         draw_paddle(paddle_pos_x, paddle_pos_y)
         move_paddle()
         draw_bricks()
