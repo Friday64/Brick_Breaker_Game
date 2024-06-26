@@ -221,6 +221,32 @@ def ball_behavior():
         ball_pos[0] += velocity[0]
         ball_pos[1] += velocity[1]
 
+    # Check for ball-to-ball collisions
+    for i in range(len(balls)):
+        for j in range(i + 1, len(balls)):
+            ball1 = balls[i]
+            ball2 = balls[j]
+            dx = ball2["pos"][0] - ball1["pos"][0]
+            dy = ball2["pos"][1] - ball1["pos"][1]
+            distance = math.hypot(dx, dy)
+            if distance < 2 * ball_radius:
+                # Calculate new velocities
+                angle = math.atan2(dy, dx)
+                speed1 = math.hypot(ball1["velocity"][0], ball1["velocity"][1])
+                speed2 = math.hypot(ball2["velocity"][0], ball2["velocity"][1])
+                direction1 = math.atan2(ball1["velocity"][1], ball1["velocity"][0])
+                direction2 = math.atan2(ball2["velocity"][1], ball2["velocity"][0])
+                new_velocity1 = [speed2 * math.cos(direction2 - angle), speed2 * math.sin(direction2 - angle)]
+                new_velocity2 = [speed1 * math.cos(direction1 - angle), speed1 * math.sin(direction1 - angle)]
+                ball1["velocity"] = [
+                    new_velocity1[0] * math.cos(angle) - new_velocity1[1] * math.sin(angle),
+                    new_velocity1[0] * math.sin(angle) + new_velocity1[1] * math.cos(angle)
+                ]
+                ball2["velocity"] = [
+                    new_velocity2[0] * math.cos(angle) - new_velocity2[1] * math.sin(angle),
+                    new_velocity2[0] * math.sin(angle) + new_velocity2[1] * math.cos(angle)
+                ]
+
     # Check for all balls out of bounds
     if len(balls) == 0:
         if tries > 0:
