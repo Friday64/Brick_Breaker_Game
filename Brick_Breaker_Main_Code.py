@@ -77,7 +77,7 @@ def draw_tries(tries):
     screen.blit(text, (width - 300, 20))
 
 # Function to draw the scoreon left-hand side of the screen
-def draw_score():
+def draw_score(score):
     font = pygame.font.SysFont(None, 50)
     text = font.render("Score: " + str(score), True, WHITE)
     screen.blit(text, (20, 20))
@@ -144,6 +144,7 @@ def ball_behavior():
 
             # Update tries on screen
             draw_tries(tries)
+        
         elif tries == 0:
             # Draw tries on screen
             draw_tries(tries)
@@ -160,13 +161,13 @@ def ball_behavior():
         for brick in row:
             #brick collision with ball(when brick_dianameter touches ball)
             if (brick["rect"].colliderect(ball_pos[0] - ball_radius, ball_pos[1] - ball_radius, 2 * ball_radius, 2 * ball_radius)):
-                row.remove(brick) 
+                row.remove(brick)
                 score += 10
                 velocity[1] = -velocity[1]
                 break
 
 def start_game():
-    global running, tries, ball_pos, velocity, bricks
+    #global running, tries, score, ball_pos, velocity, bricks
 
     # Reset tries and ball position
     tries = 3
@@ -195,8 +196,6 @@ def start_game():
                 running = False
 
         screen.fill(BLACK)
-        draw_tries(tries)
-        draw_score(score)
         draw_paddle(paddle_pos_x, paddle_pos_y)
         move_paddle()
         draw_bricks()
