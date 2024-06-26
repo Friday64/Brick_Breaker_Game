@@ -49,10 +49,7 @@ balls = [{"pos": ball_pos, "velocity": velocity}]
 
 # Function to generate random colors
 def random_color():
-    r = random.randint(0, 255)
-    g = random.randint(0, 255)
-    b = random.randint(0, 255)
-    return (r, g, b)
+    return (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
 
 # Brick settings
 brick_rows = 5
