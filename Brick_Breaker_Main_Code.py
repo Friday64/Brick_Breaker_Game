@@ -167,22 +167,6 @@ def ball_behavior():
         # Ball falls below the bottom edge
         if ball_pos[1] + ball_radius >= settings.height:
             balls.remove(ball)
-            if len(balls) == 0:
-                if tries > 0:
-                    # Reset ball position
-                    ball_pos = [settings.width // 2, settings.height // 2]
-                    angle = random.uniform(30, 150)
-                    speed = random.uniform(7, 11)
-                    velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
-                    balls.append({"pos": ball_pos, "velocity": velocity})
-
-                    # Decrease the number of tries
-                    tries -= 1
-                elif tries == 0:
-                    running = False
-                    
-                    # Display game over screen
-                    game_over_screen()
 
         # Ball collision detection with paddle
         if (paddle_pos_x <= ball_pos[0] <= paddle_pos_x + paddle_width and
@@ -202,6 +186,23 @@ def ball_behavior():
         # Update ball position
         ball_pos[0] += velocity[0]
         ball_pos[1] += velocity[1]
+
+    # Check for all balls out of bounds
+    if len(balls) == 0:
+        if tries > 0:
+            # Reset ball position
+            ball_pos = [settings.width // 2, settings.height // 2]
+            angle = random.uniform(30, 150)
+            speed = random.uniform(7, 11)
+            velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
+            balls.append({"pos": ball_pos, "velocity": velocity})
+
+            # Decrease the number of tries
+            tries -= 1
+        elif tries == 0:
+            running = False
+            # Display game over screen
+            game_over_screen()
 
     # Move the power-up down the screen
     if multiball_powerup:
