@@ -45,15 +45,17 @@ brick_offset_x = (width - (brick_columns * (brick_width + brick_spacing))) // 2
 brick_offset_y = 50
 
 # Generate bricks
-bricks = []
-for i in range(brick_rows):
-    row = []
-    for j in range(brick_columns):
-        brick_rect = pygame.Rect(brick_offset_x + j * (brick_width + brick_spacing),
-                                 brick_offset_y + i * (brick_height + brick_spacing),
-                                 brick_width, brick_height)
-        row.append({"rect": brick_rect, "color": random_color()})
-    bricks.append(row)
+def generate_bricks():
+    bricks = []
+    for i in range(brick_rows):
+        row = []
+        for j in range(brick_columns):
+            brick_rect = pygame.Rect(brick_offset_x + j * (brick_width + brick_spacing),
+                                     brick_offset_y + i * (brick_height + brick_spacing),
+                                     brick_width, brick_height)
+            row.append({"rect": brick_rect, "color": random_color()})
+        bricks.append(row)
+    return bricks
 
 # Function to draw edges of the screen
 def draw_edges():
@@ -70,14 +72,14 @@ def draw_tries(tries):
     text = font.render("Tries: " + str(tries), True, WHITE)
     screen.blit(text, (width - 300, 20))
 
-# Function to draw the scoreon left-hand side of the screen
+# Function to draw the score on the left-hand side of the screen
 def draw_score(score):
     font = pygame.font.SysFont(None, 50)
     text = font.render("Score: " + str(score), True, WHITE)
     screen.blit(text, (20, 20))
 
 # Function to draw bricks
-def draw_bricks():
+def draw_bricks(bricks):
     for row in bricks:
         for brick in row:
             pygame.draw.rect(screen, brick["color"], brick["rect"])
@@ -110,7 +112,7 @@ speed = random.uniform(7, 13)
 velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
 
 def ball_behavior():
-    global ball_pos, velocity, running, tries
+    global ball_pos, velocity, running, tries, score
 
     # Bounce off the left and right edges
     if ball_pos[0] - ball_radius <= 0:
@@ -128,7 +130,6 @@ def ball_behavior():
     # Ball falls below the bottom edge
     if ball_pos[1] + ball_radius >= height:
         if tries > 0:
-            
             # Reset ball position
             ball_pos = [width // 2, height // 2]
             angle = random.uniform(30, 150)
@@ -137,30 +138,11 @@ def ball_behavior():
             
             # Decrease the number of tries
             tries -= 1
-        
         elif tries == 0:
             running = False
-            #clear screen
-            screen.fill(BLACK)
-            #display score and game over in center of screen
-            font = pygame.font.SysFont(None, 50)
-            text = font.render("Game Over", True, WHITE)
-            screen.blit(text, (width // 2 - text.get_width() // 2, height // 2 - text.get_height() // 2))
-            text = font.render("Score: " + str(score), True, WHITE)
-            screen.blit(text, (width // 2 - text.get_width() // 2, height // 2 + text.get_height() // 2))
-            pygame.display.flip()
             
-            # create a new menu for restart or quit
-            menu = pygame_menu.Menu('Game Over', width, height, theme=pygame_menu.themes.THEME_DARK)
-            menu.add.button('Restart', start_game)
-            menu.add.button('Quit', pygame_menu.events.EXIT)
-            menu.mainloop(screen)
-
-        else:
-            pass
-            
-            pygame.display.update()
-
+            # Display game over screen
+            game_over_screen()
 
     # Ball collision detection with paddle
     if (paddle_pos_x <= ball_pos[0] <= paddle_pos_x + paddle_width and
@@ -171,35 +153,49 @@ def ball_behavior():
     # Ball collision detection with bricks
     for row in bricks:
         for brick in row:
-            #brick collision with ball(when brick_dianameter touches ball)
-            if (brick["rect"].colliderect(ball_pos[0] - ball_radius, ball_pos[1] - ball_radius, 2 * ball_radius, 2 * ball_radius)):
+            if brick["rect"].colliderect(ball_pos[0] - ball_radius, ball_pos[1] - ball_radius, 2 * ball_radius, 2 * ball_radius):
                 row.remove(brick)
                 score += 10
                 velocity[1] = -velocity[1]
                 break
 
+def game_over_screen():
+    screen.fill(BLACK)
+    
+    font = pygame.font.SysFont(None, 50)
+    text = font.render("Game Over", True, WHITE)
+    screen.blit(text, (width // 2 - 100, height // 2 - 50))
+    text = font.render("Score: " + str(score), True, WHITE)
+    screen.blit(text, (width // 2 - 50, height // 2))
+    pygame.draw.rect(screen, WHITE, (width // 2 - 50, height // 2 + 50, 100, 50), 0)
+    text = font.render("Restart", True, BLACK)
+    screen.blit(text, (width // 2 - 40, height // 2 + 55))
+
+    pygame.display.update()
+    
+    waiting = True
+    while waiting:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                waiting = False
+                start_game()
+
 def start_game():
     global running, tries, score, ball_pos, velocity, bricks
 
-    # Reset tries score and ball position
+    # Reset tries, score, and ball position
     tries = 3
     score = 0
     ball_pos = [width // 2, height // 2]
-    
     angle = random.uniform(30, 150)
     speed = random.uniform(7, 13)
     velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
 
     # Regenerate bricks
-    bricks = []
-    for i in range(brick_rows):
-        row = []
-        for j in range(brick_columns):
-            brick_rect = pygame.Rect(brick_offset_x + j * (brick_width + brick_spacing),
-                                     brick_offset_y + i * (brick_height + brick_spacing),
-                                     brick_width, brick_height)
-            row.append({"rect": brick_rect, "color": random_color()})
-        bricks.append(row)
+    bricks = generate_bricks()
 
     running = True
 
@@ -214,7 +210,7 @@ def start_game():
         draw_tries(tries)
         draw_paddle(paddle_pos_x, paddle_pos_y)
         move_paddle()
-        draw_bricks()
+        draw_bricks(bricks)
         draw_edges()
         ball_behavior()
 
