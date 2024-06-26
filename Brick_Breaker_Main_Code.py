@@ -246,6 +246,14 @@ def ball_behavior():
                     new_velocity2[0] * math.cos(angle) - new_velocity2[1] * math.sin(angle),
                     new_velocity2[0] * math.sin(angle) + new_velocity2[1] * math.cos(angle)
                 ]
+                
+                # Separate balls to prevent overlap
+                overlap = 2 * ball_radius - distance
+                separation_vector = [overlap * math.cos(angle) / 2, overlap * math.sin(angle) / 2]
+                ball1["pos"][0] -= separation_vector[0]
+                ball1["pos"][1] -= separation_vector[1]
+                ball2["pos"][0] += separation_vector[0]
+                ball2["pos"][1] += separation_vector[1]
 
     # Check for all balls out of bounds
     if len(balls) == 0:
