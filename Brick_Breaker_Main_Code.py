@@ -16,10 +16,11 @@ screen = pygame.display.set_mode((width, height), pygame.DOUBLEBUF | pygame.HWSU
 pygame.display.set_caption("Brick Breaker")
 
 # menu setup with a def function to initialize Pygame and create the menu defining all menu variables
-# clears the screen and displays the menu
-# the menu will be displayed until the user presses the play button
+# then clear the screen and display the menu
+# the menu will be displayed until the user presses the play button or the quit button
 # close pygame when the user presses the quit button
-# also dispays the menu when tries = 0
+# also clears the screen and dispays the menu when tries = 0
+
 def menu():
     pygame.init()
     menu = pygame_menu.Menu('Brick Breaker', 400, 300, theme=pygame_menu.themes.THEME_BLUE)
@@ -27,7 +28,7 @@ def menu():
     menu.add.button('Quit', pygame_menu.events.EXIT)
     menu.mainloop(screen)
 
-#call the menu function
+# call the menu function
 menu()
 
 # Frame rate setup
@@ -178,7 +179,7 @@ def ball_behavior():
                 break
 
 # Main loop
-while running:
+while running == True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
