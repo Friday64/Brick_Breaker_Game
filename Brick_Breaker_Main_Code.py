@@ -28,6 +28,9 @@ paddle_pos_y = settings.height - 200
 paddle_pos_x = settings.width // 2 - settings.paddle_width // 2
 paddle_speed = settings.paddle_speed
 
+# Level settings
+current_level = 1
+
 # Function to generate random colors
 def random_color():
     r = random.randint(0, 255)
@@ -45,12 +48,12 @@ brick_offset_x = (settings.width - (brick_columns * (brick_width + brick_spacing
 brick_offset_y = 50
 
 # Generate bricks
-def generate_bricks():
+def generate_bricks(level):
     bricks = []
     for i in range(brick_rows):
         row = []
         for j in range(brick_columns):
-            if random.choice([True, False]):  # Randomly decide whether to place a brick
+            if random.random() < 0.5:  # Randomly decide whether to place a brick
                 brick_rect = pygame.Rect(brick_offset_x + j * (brick_width + brick_spacing),
                                          brick_offset_y + i * (brick_height + brick_spacing),
                                          brick_width, brick_height)
@@ -80,6 +83,13 @@ def draw_score(score):
     font = pygame.font.SysFont(None, 50)
     text = font.render("Score: " + str(score), True, WHITE)
     screen.blit(text, (20, 20))
+
+# Function to draw the current level at the bottom right of the screen
+def draw_level(level):
+    font = pygame.font.SysFont(None, 50)
+    text = font.render("Level: " + str(level), True, WHITE)
+    text_rect = text.get_rect(bottomright=(settings.width - 20, settings.height - 20))
+    screen.blit(text, text_rect)
 
 # Function to draw bricks
 def draw_bricks(bricks):
@@ -116,7 +126,7 @@ speed = random.uniform(7, 13)
 velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
 
 def ball_behavior():
-    global ball_pos, velocity, running, tries, score
+    global ball_pos, velocity, running, tries, score, current_level, bricks
 
     # Bounce off the left and right edges
     if ball_pos[0] - ball_radius <= 0:
@@ -163,6 +173,14 @@ def ball_behavior():
                 velocity[1] = -velocity[1]
                 break
 
+    # Check if all bricks are cleared
+    if all(all(brick is None for brick in row) for row in bricks):
+        # Advance to the next level
+        current_level += 1
+        if current_level > settings.num_levels:
+            current_level = 1  # Restart at level 1
+        bricks = generate_bricks(current_level)
+
 def game_over_screen():
     screen.fill(BLACK)
     
@@ -189,18 +207,19 @@ def game_over_screen():
                 start_game()
 
 def start_game():
-    global running, tries, score, ball_pos, velocity, bricks
+    global running, tries, score, ball_pos, velocity, bricks, current_level
 
-    # Reset tries, score, and ball position
+    # Reset tries, score, level, and ball position
     tries = 3
     score = 0
+    current_level = 1
     ball_pos = [settings.width // 2, settings.height // 2]
     angle = random.uniform(30, 150)
     speed = random.uniform(7, 13)
     velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
 
-    # Regenerate bricks
-    bricks = generate_bricks()
+    # Generate bricks for the first level
+    bricks = generate_bricks(current_level)
 
     running = True
 
@@ -213,6 +232,7 @@ def start_game():
         screen.fill(BLACK)
         draw_score(score)
         draw_tries(tries)
+        draw_level(current_level)
         draw_paddle(paddle_pos_x, paddle_pos_y)
         move_paddle()
         draw_bricks(bricks)
