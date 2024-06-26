@@ -36,6 +36,17 @@ current_level = 1
 multiball_active = False
 multiball_powerup = None
 
+# Global variables for ball settings
+ball_radius = settings.ball_radius
+ball_color = BLUE
+ball_pos = [settings.width // 2, settings.height // 2]
+angle = random.uniform(30, 150)
+speed = random.uniform(7, 13)
+velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
+
+# List to keep track of all active balls
+balls = [{"pos": ball_pos, "velocity": velocity}]
+
 # Function to generate random colors
 def random_color():
     r = random.randint(0, 255)
@@ -133,17 +144,6 @@ def move_paddle():
     if paddle_pos_x > settings.width - paddle_width:
         paddle_pos_x = settings.width - paddle_width
 
-# Ball settings
-ball_radius = settings.ball_radius
-ball_color = BLUE
-ball_pos = [settings.width // 2, settings.height // 2]
-angle = random.uniform(30, 150)
-speed = random.uniform(7, 13)
-velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
-
-# List to keep track of all active balls
-balls = [{"pos": ball_pos, "velocity": velocity}]
-
 def ball_behavior():
     global running, tries, score, current_level, bricks, multiball_active, balls, multiball_powerup
 
@@ -221,7 +221,11 @@ def ball_behavior():
             current_level = 1  # Restart at level 1
         bricks = generate_bricks(current_level)
         multiball_active = False
-        balls = [{"pos": [settings.width // 2, settings.height // 2], "velocity": [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]}]
+        ball_pos = [settings.width // 2, settings.height // 2]
+        angle = random.uniform(30, 150)
+        speed = random.uniform(7, 13)
+        velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
+        balls = [{"pos": ball_pos, "velocity": velocity}]
 
 def game_over_screen():
     screen.fill(BLACK)
@@ -249,7 +253,7 @@ def game_over_screen():
                 start_game()
 
 def start_game():
-    global running, tries, score, ball_pos, velocity, bricks, current_level, multiball_active, multiball_powerup, balls
+    global running, tries, score, ball_pos, velocity, bricks, current_level, multiball_active, multiball_powerup, balls, angle, speed
 
     # Reset tries, score, level, and ball position
     tries = 3
