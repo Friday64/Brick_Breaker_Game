@@ -153,15 +153,18 @@ def ball_behavior():
             text = font.render("Score: " + str(score), True, WHITE)
             screen.blit(text, (width // 2 - text.get_width() // 2, height // 2 + text.get_height() // 2))
             pygame.display.flip()
-            #freeze screen until user click on x button
-            while True:
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        pygame.quit()
-                        sys.exit()
-                pygame.time.wait(1000)
+            
+            # create a new menu for restart or quit
+            menu = pygame_menu.Menu('Game Over', width, height, theme=pygame_menu.themes.THEME_DARK)
+            menu.add.button('Restart', start_game)
+            menu.add.button('Quit', pygame_menu.events.EXIT)
+            menu.mainloop(screen)
 
-            sys.exit()
+        else:
+            pass
+            
+            pygame.display.update()
+
 
     # Ball collision detection with paddle
     if (paddle_pos_x <= ball_pos[0] <= paddle_pos_x + paddle_width and
