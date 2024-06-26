@@ -7,13 +7,28 @@ import sys
 import random
 import math
 
-#menu setup with a def function to initialize Pygame
+# Initialize Pygame
+pygame.init()
+
+# Screen dimensions and settings
+width, height = 1920, 1080
+screen = pygame.display.set_mode((width, height), pygame.DOUBLEBUF | pygame.HWSURFACE)
+pygame.display.set_caption("Brick Breaker")
+
+# menu setup with a def function to initialize Pygame and create the menu defining all menu variables
+# clears the screen and displays the menu
+# the menu will be displayed until the user presses the play button
+# close pygame when the user presses the quit button
+# also dispays the menu when tries = 0
 def menu():
     pygame.init()
     menu = pygame_menu.Menu('Brick Breaker', 400, 300, theme=pygame_menu.themes.THEME_BLUE)
-    menu.add.button('Play', pygame.init())
+    menu.add.button('Play', running = True)
     menu.add.button('Quit', pygame_menu.events.EXIT)
     menu.mainloop(screen)
+
+#call the menu function
+menu()
 
 # Frame rate setup
 frame_rate = 75  # Adjustable frame rate
@@ -36,10 +51,6 @@ def draw_tries(tries):
     text = font.render("Tries: " + str(tries), True, WHITE)
     screen.blit(text, (width - 300, 20))
     
-# Screen dimensions and settings
-width, height = 1920, 1080
-screen = pygame.display.set_mode((width, height), pygame.DOUBLEBUF | pygame.HWSURFACE)
-pygame.display.set_caption("Brick Breaker")
 
 # Draw edges of the screen
 def draw_edges():
@@ -167,7 +178,6 @@ def ball_behavior():
                 break
 
 # Main loop
-running = True
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
