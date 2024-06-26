@@ -21,6 +21,12 @@ pygame.display.set_caption("Brick Breaker")
 # close pygame when the user presses the quit button
 # also clears the screen and dispays the menu when tries = 0
 
+# Colors for the game text
+BLACK = (0, 0, 0)
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+BLUE = (0, 0, 255)
+
 def menu():
     pygame.init()
     menu = pygame_menu.Menu('Brick Breaker', 400, 300, theme=pygame_menu.themes.THEME_BLUE)
@@ -40,19 +46,6 @@ tries = 3
 #score
 score = 0
 
-# Colors for the game text
-BLACK = (0, 0, 0)
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-BLUE = (0, 0, 255)
-
-# Draw number of tries on the right-hand side of the screen while the game is running
-def draw_tries(tries):
-    font = pygame.font.SysFont(None, 50)
-    text = font.render("Tries: " + str(tries), True, WHITE)
-    screen.blit(text, (width - 300, 20))
-    
-
 # Draw edges of the screen
 def draw_edges():
     edge_thickness = 10
@@ -62,6 +55,12 @@ def draw_edges():
     pygame.draw.rect(screen, edge_color, (0, 0, width, edge_thickness), 0)
     pygame.draw.rect(screen, edge_color, (0, height - edge_thickness, width, edge_thickness), 0)
 
+# Draw number of tries on the right-hand side of the screen while the game is running
+def draw_tries(tries):
+    font = pygame.font.SysFont(None, 50)
+    text = font.render("Tries: " + str(tries), True, WHITE)
+    screen.blit(text, (width - 300, 20))
+    
 # Paddle settings
 paddle_width = 400
 paddle_height = 20
@@ -183,7 +182,7 @@ while running == True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-
+  
     screen.fill(BLACK)
     draw_tries(tries)
     draw_paddle(paddle_pos_x, paddle_pos_y)
@@ -191,7 +190,7 @@ while running == True:
     draw_bricks()
     draw_edges()
     ball_behavior()
-
+    
     # Update ball position
     ball_pos[0] += velocity[0]
     ball_pos[1] += velocity[1]
