@@ -8,12 +8,12 @@ import random
 import math
 
 #menu setup with a def function to initialize Pygame
-menu = pygame_menu.Menu('Brick Breaker', 400, 300, theme=pygame_menu.themes.THEME_BLUE)
-menu.add.button('Play', pygame.init())
-menu.add.button('Quit', pygame_menu.events.EXIT)
-
-# Initialize Pygame
-pygame.init()
+def menu():
+    pygame.init()
+    menu = pygame_menu.Menu('Brick Breaker', 400, 300, theme=pygame_menu.themes.THEME_BLUE)
+    menu.add.button('Play', pygame.init())
+    menu.add.button('Quit', pygame_menu.events.EXIT)
+    menu.mainloop(screen)
 
 # Frame rate setup
 frame_rate = 75  # Adjustable frame rate
