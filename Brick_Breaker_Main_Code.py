@@ -167,7 +167,7 @@ def ball_behavior():
                 break
 
 def start_game():
-    #global running, tries, score, ball_pos, velocity, bricks
+    global running, tries, score, ball_pos, velocity, bricks
 
     # Reset tries and ball position
     tries = 3
