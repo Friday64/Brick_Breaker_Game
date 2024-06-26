@@ -167,9 +167,8 @@ def game_over_screen():
     screen.blit(text, (width // 2 - 100, height // 2 - 50))
     text = font.render("Score: " + str(score), True, WHITE)
     screen.blit(text, (width // 2 - 50, height // 2))
-    pygame.draw.rect(screen, WHITE, (width // 2 - 50, height // 2 + 50, 100, 50), 0)
-    text = font.render("Restart", True, BLACK)
-    screen.blit(text, (width // 2 - 40, height // 2 + 55))
+    text = font.render("Press Enter to Restart", True, WHITE)
+    screen.blit(text, (width // 2 - 150, height // 2 + 50))
 
     pygame.display.update()
     
@@ -179,7 +178,7 @@ def game_over_screen():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 waiting = False
                 start_game()
 
