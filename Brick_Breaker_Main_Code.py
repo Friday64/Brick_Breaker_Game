@@ -21,12 +21,6 @@ BLUE = (0, 0, 255)
 # Frame rate setup
 frame_rate = 75  # Adjustable frame rate
 
-# Set number of tries to 3
-tries = 3
-
-# Score
-score = 0
-
 # Paddle settings
 paddle_width = 400
 paddle_height = 20
@@ -134,12 +128,14 @@ def ball_behavior():
     # Ball falls below the bottom edge
     if ball_pos[1] + ball_radius >= height:
         if tries > 0:
+            
             # Reset ball position
             ball_pos = [width // 2, height // 2]
             angle = random.uniform(30, 150)
             speed = random.uniform(7, 11)
             velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
-
+            
+            # Decrease the number of tries
             tries -= 1
         
         elif tries == 0:
@@ -178,16 +174,18 @@ def ball_behavior():
             #brick collision with ball(when brick_dianameter touches ball)
             if (brick["rect"].colliderect(ball_pos[0] - ball_radius, ball_pos[1] - ball_radius, 2 * ball_radius, 2 * ball_radius)):
                 row.remove(brick)
-                score = score+1
+                score += 10
                 velocity[1] = -velocity[1]
                 break
 
 def start_game():
     global running, tries, score, ball_pos, velocity, bricks
 
-    # Reset tries and ball position
+    # Reset tries score and ball position
     tries = 3
+    score = 0
     ball_pos = [width // 2, height // 2]
+    
     angle = random.uniform(30, 150)
     speed = random.uniform(7, 13)
     velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
