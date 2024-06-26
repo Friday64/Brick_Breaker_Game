@@ -3,13 +3,13 @@ import pygame_menu
 import sys
 import random
 import math
+import settings
 
 # Initialize Pygame
 pygame.init()
 
 # Screen dimensions and settings
-width, height = 1920, 1080
-screen = pygame.display.set_mode((width, height), pygame.DOUBLEBUF | pygame.HWSURFACE)
+screen = pygame.display.set_mode((settings.width, settings.height), pygame.DOUBLEBUF | pygame.HWSURFACE)
 pygame.display.set_caption("Brick Breaker")
 
 # Colors for the game text
@@ -19,14 +19,14 @@ RED = (255, 0, 0)
 BLUE = (0, 0, 255)
 
 # Frame rate setup
-frame_rate = 75  # Adjustable frame rate
+frame_rate = settings.frame_rate  # Adjustable frame rate
 
-# Paddle settings   
-paddle_width = 400
-paddle_height = 20
-paddle_pos_y = height - 200
-paddle_pos_x = width // 2 - paddle_width // 2
-paddle_speed = 10
+# Paddle settings
+paddle_width = settings.paddle_width
+paddle_height = settings.paddle_height
+paddle_pos_y = settings.height - 200
+paddle_pos_x = settings.width // 2 - settings.paddle_width // 2
+paddle_speed = settings.paddle_speed
 
 # Function to generate random colors
 def random_color():
@@ -41,9 +41,9 @@ brick_columns = 10
 brick_width = 100
 brick_height = 50
 brick_spacing = 10
-brick_offset_x = (width - (brick_columns * (brick_width + brick_spacing))) // 2
+brick_offset_x = (settings.width - (brick_columns * (brick_width + brick_spacing))) // 2
 brick_offset_y = 50
-num_bricks = brick_rows * brick_columns
+
 # Generate bricks
 def generate_bricks():
     bricks = []
@@ -61,16 +61,16 @@ def generate_bricks():
 def draw_edges():
     edge_thickness = 10
     edge_color = (255, 255, 255, 128)  # White with transparency
-    pygame.draw.rect(screen, edge_color, (0, 0, edge_thickness, height), 0)
-    pygame.draw.rect(screen, edge_color, (width - edge_thickness, 0, edge_thickness, height), 0)
-    pygame.draw.rect(screen, edge_color, (0, 0, width, edge_thickness), 0)
-    pygame.draw.rect(screen, edge_color, (0, height - edge_thickness, width, edge_thickness), 0)
+    pygame.draw.rect(screen, edge_color, (0, 0, edge_thickness, settings.height), 0)
+    pygame.draw.rect(screen, edge_color, (settings.width - edge_thickness, 0, edge_thickness, settings.height), 0)
+    pygame.draw.rect(screen, edge_color, (0, 0, settings.width, edge_thickness), 0)
+    pygame.draw.rect(screen, edge_color, (0, settings.height - edge_thickness, settings.width, edge_thickness), 0)
 
 # Function to draw number of tries on the right-hand side of the screen while the game is running
 def draw_tries(tries):
     font = pygame.font.SysFont(None, 50)
     text = font.render("Tries: " + str(tries), True, WHITE)
-    screen.blit(text, (width - 300, 20))
+    screen.blit(text, (settings.width - 300, 20))
 
 # Function to draw the score on the left-hand side of the screen
 def draw_score(score):
@@ -100,13 +100,13 @@ def move_paddle():
     # Make sure the paddle doesn't go off screen
     if paddle_pos_x < 0:
         paddle_pos_x = 0
-    if paddle_pos_x > width - paddle_width:
-        paddle_pos_x = width - paddle_width
+    if paddle_pos_x > settings.width - paddle_width:
+        paddle_pos_x = settings.width - paddle_width
 
 # Ball settings
-ball_radius = 20
+ball_radius = settings.ball_radius
 ball_color = BLUE
-ball_pos = [width // 2, height // 2]
+ball_pos = [settings.width // 2, settings.height // 2]
 angle = random.uniform(30, 150)
 speed = random.uniform(7, 13)
 velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
@@ -118,8 +118,8 @@ def ball_behavior():
     if ball_pos[0] - ball_radius <= 0:
         ball_pos[0] = ball_radius
         velocity[0] = -velocity[0]
-    elif ball_pos[0] + ball_radius >= width:
-        ball_pos[0] = width - ball_radius
+    elif ball_pos[0] + ball_radius >= settings.width:
+        ball_pos[0] = settings.width - ball_radius
         velocity[0] = -velocity[0]
 
     # Bounce off the top edge
@@ -128,10 +128,10 @@ def ball_behavior():
         velocity[1] = -velocity[1]
 
     # Ball falls below the bottom edge
-    if ball_pos[1] + ball_radius >= height:
+    if ball_pos[1] + ball_radius >= settings.height:
         if tries > 0:
             # Reset ball position
-            ball_pos = [width // 2, height // 2]
+            ball_pos = [settings.width // 2, settings.height // 2]
             angle = random.uniform(30, 150)
             speed = random.uniform(7, 11)
             velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
@@ -164,11 +164,11 @@ def game_over_screen():
     
     font = pygame.font.SysFont(None, 50)
     texts = ["Game Over", f"Score: {score}", "Press Enter to Restart"]
-    y_offset = height // 2 - 100  # Start a bit higher on the screen
+    y_offset = settings.height // 2 - 100  # Start a bit higher on the screen
 
     for text in texts:
         rendered_text = font.render(text, True, WHITE)
-        text_rect = rendered_text.get_rect(center=(width // 2, y_offset))
+        text_rect = rendered_text.get_rect(center=(settings.width // 2, y_offset))
         screen.blit(rendered_text, text_rect)
         y_offset += 100  # Move down for the next line of text
 
@@ -190,7 +190,7 @@ def start_game():
     # Reset tries, score, and ball position
     tries = 3
     score = 0
-    ball_pos = [width // 2, height // 2]
+    ball_pos = [settings.width // 2, settings.height // 2]
     angle = random.uniform(30, 150)
     speed = random.uniform(7, 13)
     velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
@@ -214,11 +214,7 @@ def start_game():
         draw_bricks(bricks)
         draw_edges()
         ball_behavior()
-    
-        if num_bricks == 0:
-            running = False
-            game_over_screen()
-        
+
         # Update ball position
         ball_pos[0] += velocity[0]
         ball_pos[1] += velocity[1]
