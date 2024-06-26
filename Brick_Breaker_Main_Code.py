@@ -1,8 +1,5 @@
-#non-system libraries
 import pygame
 import pygame_menu
-
-#system libraries
 import sys
 import random
 import math
@@ -15,27 +12,11 @@ width, height = 1920, 1080
 screen = pygame.display.set_mode((width, height), pygame.DOUBLEBUF | pygame.HWSURFACE)
 pygame.display.set_caption("Brick Breaker")
 
-# menu setup with a def function to initialize Pygame and create the menu defining all menu variables
-# then clear the screen and display the menu
-# the menu will be displayed until the user presses the play button or the quit button
-# close pygame when the user presses the quit button
-# also clears the screen and dispays the menu when tries = 0
-
 # Colors for the game text
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 BLUE = (0, 0, 255)
-
-def menu():
-    pygame.init()
-    menu = pygame_menu.Menu('Brick Breaker', 400, 300, theme=pygame_menu.themes.THEME_BLUE)
-    menu.add.button('Play', running = True)
-    menu.add.button('Quit', pygame_menu.events.EXIT)
-    menu.mainloop(screen)
-
-# call the menu function
-menu()
 
 # Frame rate setup
 frame_rate = 75  # Adjustable frame rate
@@ -43,24 +24,9 @@ frame_rate = 75  # Adjustable frame rate
 # Set number of tries to 3
 tries = 3
 
-#score
+# Score
 score = 0
 
-# Draw edges of the screen
-def draw_edges():
-    edge_thickness = 10
-    edge_color = (255, 255, 255, 128)  # White with transparency
-    pygame.draw.rect(screen, edge_color, (0, 0, edge_thickness, height), 0)
-    pygame.draw.rect(screen, edge_color, (width - edge_thickness, 0, edge_thickness, height), 0)
-    pygame.draw.rect(screen, edge_color, (0, 0, width, edge_thickness), 0)
-    pygame.draw.rect(screen, edge_color, (0, height - edge_thickness, width, edge_thickness), 0)
-
-# Draw number of tries on the right-hand side of the screen while the game is running
-def draw_tries(tries):
-    font = pygame.font.SysFont(None, 50)
-    text = font.render("Tries: " + str(tries), True, WHITE)
-    screen.blit(text, (width - 300, 20))
-    
 # Paddle settings
 paddle_width = 400
 paddle_height = 20
@@ -94,6 +60,21 @@ for i in range(brick_rows):
                                  brick_width, brick_height)
         row.append({"rect": brick_rect, "color": random_color()})
     bricks.append(row)
+
+# Function to draw edges of the screen
+def draw_edges():
+    edge_thickness = 10
+    edge_color = (255, 255, 255, 128)  # White with transparency
+    pygame.draw.rect(screen, edge_color, (0, 0, edge_thickness, height), 0)
+    pygame.draw.rect(screen, edge_color, (width - edge_thickness, 0, edge_thickness, height), 0)
+    pygame.draw.rect(screen, edge_color, (0, 0, width, edge_thickness), 0)
+    pygame.draw.rect(screen, edge_color, (0, height - edge_thickness, width, edge_thickness), 0)
+
+# Function to draw number of tries on the right-hand side of the screen while the game is running
+def draw_tries(tries):
+    font = pygame.font.SysFont(None, 50)
+    text = font.render("Tries: " + str(tries), True, WHITE)
+    screen.blit(text, (width - 300, 20))
 
 # Function to draw bricks
 def draw_bricks():
@@ -177,28 +158,60 @@ def ball_behavior():
                 velocity[1] = -velocity[1]
                 break
 
-# Main loop
-while running == True:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-  
-    screen.fill(BLACK)
-    draw_tries(tries)
-    draw_paddle(paddle_pos_x, paddle_pos_y)
-    move_paddle()
-    draw_bricks()
-    draw_edges()
-    ball_behavior()
-    
-    # Update ball position
-    ball_pos[0] += velocity[0]
-    ball_pos[1] += velocity[1]
+def start_game():
+    global running, tries, ball_pos, velocity, bricks
 
-    pygame.draw.circle(screen, ball_color, (int(ball_pos[0]), int(ball_pos[1])), ball_radius)
-    pygame.display.flip()
-    pygame.time.Clock().tick(frame_rate)
+    # Reset tries and ball position
+    tries = 3
+    ball_pos = [width // 2, height // 2]
+    angle = random.uniform(30, 150)
+    speed = random.uniform(7, 13)
+    velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
 
-# Quit Pygame
-pygame.quit()
-sys.exit()
+    # Regenerate bricks
+    bricks = []
+    for i in range(brick_rows):
+        row = []
+        for j in range(brick_columns):
+            brick_rect = pygame.Rect(brick_offset_x + j * (brick_width + brick_spacing),
+                                     brick_offset_y + i * (brick_height + brick_spacing),
+                                     brick_width, brick_height)
+            row.append({"rect": brick_rect, "color": random_color()})
+        bricks.append(row)
+
+    running = True
+
+    # Main game loop
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+
+        screen.fill(BLACK)
+        draw_tries(tries)
+        draw_paddle(paddle_pos_x, paddle_pos_y)
+        move_paddle()
+        draw_bricks()
+        draw_edges()
+        ball_behavior()
+
+        # Update ball position
+        ball_pos[0] += velocity[0]
+        ball_pos[1] += velocity[1]
+
+        pygame.draw.circle(screen, ball_color, (int(ball_pos[0]), int(ball_pos[1])), ball_radius)
+        pygame.display.flip()
+        pygame.time.Clock().tick(frame_rate)
+
+    # Quit Pygame
+    pygame.quit()
+    sys.exit()
+
+def menu():
+    menu = pygame_menu.Menu('Brick Breaker', 400, 300, theme=pygame_menu.themes.THEME_BLUE)
+    menu.add.button('Play', start_game)
+    menu.add.button('Quit', pygame_menu.events.EXIT)
+    menu.mainloop(screen)
+
+if __name__ == "__main__":
+    menu()
