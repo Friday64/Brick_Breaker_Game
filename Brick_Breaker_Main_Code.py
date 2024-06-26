@@ -50,10 +50,13 @@ def generate_bricks():
     for i in range(brick_rows):
         row = []
         for j in range(brick_columns):
-            brick_rect = pygame.Rect(brick_offset_x + j * (brick_width + brick_spacing),
-                                     brick_offset_y + i * (brick_height + brick_spacing),
-                                     brick_width, brick_height)
-            row.append({"rect": brick_rect, "color": random_color()})
+            if random.choice([True, False]):  # Randomly decide whether to place a brick
+                brick_rect = pygame.Rect(brick_offset_x + j * (brick_width + brick_spacing),
+                                         brick_offset_y + i * (brick_height + brick_spacing),
+                                         brick_width, brick_height)
+                row.append({"rect": brick_rect, "color": random_color()})
+            else:
+                row.append(None)  # No brick in this position
         bricks.append(row)
     return bricks
 
@@ -82,7 +85,8 @@ def draw_score(score):
 def draw_bricks(bricks):
     for row in bricks:
         for brick in row:
-            pygame.draw.rect(screen, brick["color"], brick["rect"])
+            if brick:  # Only draw if there is a brick
+                pygame.draw.rect(screen, brick["color"], brick["rect"])
 
 # Function to draw the paddle
 def draw_paddle(x, y):
@@ -153,7 +157,7 @@ def ball_behavior():
     # Ball collision detection with bricks
     for row in bricks:
         for brick in row:
-            if brick["rect"].colliderect(ball_pos[0] - ball_radius, ball_pos[1] - ball_radius, 2 * ball_radius, 2 * ball_radius):
+            if brick and brick["rect"].colliderect(ball_pos[0] - ball_radius, ball_pos[1] - ball_radius, 2 * ball_radius, 2 * ball_radius):
                 row.remove(brick)
                 score += 10
                 velocity[1] = -velocity[1]
