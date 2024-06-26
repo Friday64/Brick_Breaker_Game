@@ -82,8 +82,8 @@ def generate_bricks(level):
 # Function to generate a multiball power-up
 def generate_multiball_powerup():
     x = random.randint(100, settings.width - 100)
-    y = random.randint(100, settings.height - 500)
-    return {"rect": pygame.Rect(x, y, 30, 30), "color": GREEN}
+    y = 0  # Start at the top of the screen
+    return {"rect": pygame.Rect(x, y, 30, 30), "color": GREEN, "speed": 5}
 
 # Function to draw edges of the screen
 def draw_edges():
@@ -202,6 +202,10 @@ def ball_behavior():
         # Update ball position
         ball_pos[0] += velocity[0]
         ball_pos[1] += velocity[1]
+
+    # Move the power-up down the screen
+    if multiball_powerup:
+        multiball_powerup["rect"].y += multiball_powerup["speed"]
 
     # Check for collision with multiball power-up
     if multiball_powerup and multiball_powerup["rect"].colliderect(paddle_pos_x, paddle_pos_y, paddle_width, paddle_height):
