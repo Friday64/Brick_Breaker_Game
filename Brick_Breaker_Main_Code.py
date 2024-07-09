@@ -4,6 +4,8 @@ import sys
 import random
 import math
 import settings
+import threading
+import time
 
 # Initialize Pygame
 pygame.init()
@@ -284,69 +286,76 @@ def ball_behavior():
             # Display game over screen
             game_over_screen()
 
-    # Move the power-up down the screen
-    if multiball_powerup:
-        multiball_powerup["rect"].y += multiball_powerup["speed"]
+def move_powerups():
+    global multiball_powerup, paddle_size_powerup, slow_ball_powerup
+    while running:
+        if multiball_powerup:
+            multiball_powerup["rect"].y += multiball_powerup["speed"]
+        if paddle_size_powerup:
+            paddle_size_powerup["rect"].y += paddle_size_powerup["speed"]
+        if slow_ball_powerup:
+            slow_ball_powerup["rect"].y += slow_ball_powerup["speed"]
+        time.sleep(0.01)  # Update power-up positions every 10 milliseconds
 
-    if paddle_size_powerup:
-        paddle_size_powerup["rect"].y += paddle_size_powerup["speed"]
+def detect_collisions():
+    global multiball_powerup, paddle_size_powerup, slow_ball_powerup, multiball_active, paddle_size_increase_active, slow_ball_active, original_speeds, ball_attached, tries, score, current_level, bricks
 
-    if slow_ball_powerup:
-        slow_ball_powerup["rect"].y += slow_ball_powerup["speed"]
+    while running:
+        # Check for collision with multiball power-up
+        if multiball_powerup and multiball_powerup["rect"].colliderect(paddle_pos_x, paddle_pos_y, paddle_width, paddle_height):
+            multiball_active = True
+            multiball_powerup = None
+            for _ in range(2):  # Add two more balls
+                angle = random.uniform(30, 150)
+                speed = random.uniform(7, 13)
+                new_velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
+                balls.append({"pos": ball_pos.copy(), "velocity": new_velocity})
 
-    # Check for collision with multiball power-up
-    if multiball_powerup and multiball_powerup["rect"].colliderect(paddle_pos_x, paddle_pos_y, paddle_width, paddle_height):
-        multiball_active = True
-        multiball_powerup = None
-        for _ in range(2):  # Add two more balls
+        # Check for collision with paddle size increase power-up
+        if paddle_size_powerup and paddle_size_powerup["rect"].colliderect(paddle_pos_x, paddle_pos_y, paddle_width, paddle_height):
+            paddle_size_increase_active = True
+            paddle_size_powerup = None
+            paddle_width *= 1.5  # Increase the paddle size by 50%
+            paddle_size_increase_timer = pygame.time.get_ticks()  # Start the timer
+
+        # Reset paddle size after power-up effect duration
+        if paddle_size_increase_active and pygame.time.get_ticks() - paddle_size_increase_timer > paddle_size_increase_duration:
+            paddle_size_increase_active = False
+            paddle_width = settings.paddle_width  # Reset to original size
+
+        # Check for collision with slow ball power-up
+        if slow_ball_powerup and slow_ball_powerup["rect"].colliderect(paddle_pos_x, paddle_pos_y, paddle_width, paddle_height):
+            slow_ball_active = True
+            slow_ball_powerup = None
+            original_speeds = [ball["velocity"][:] for ball in balls]  # Store original speeds
+            for ball in balls:
+                ball["velocity"][0] *= 0.5  # Reduce x velocity by 50%
+                ball["velocity"][1] *= 0.5  # Reduce y velocity by 50%
+            slow_ball_timer = pygame.time.get_ticks()  # Start the timer
+
+        # Reset ball speed after power-up effect duration
+        if slow_ball_active and pygame.time.get_ticks() - slow_ball_timer > slow_ball_duration:
+            slow_ball_active = False
+            for i, ball in enumerate(balls):
+                ball["velocity"] = original_speeds[i]  # Reset to original speed
+
+        # Check if all bricks are cleared
+        if all(all(brick is None for brick in row) for row in bricks):
+            # Advance to the next level
+            current_level += 1
+            if current_level > settings.num_levels:
+                current_level = 1  # Restart at level 1
+            bricks = generate_bricks(current_level)
+            multiball_active = False
+            ball_pos = [paddle_pos_x + paddle_width // 2, paddle_pos_y - ball_radius]
+            ball_attached = True
             angle = random.uniform(30, 150)
             speed = random.uniform(7, 13)
-            new_velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
-            balls.append({"pos": ball_pos.copy(), "velocity": new_velocity})
-
-    # Check for collision with paddle size increase power-up
-    if paddle_size_powerup and paddle_size_powerup["rect"].colliderect(paddle_pos_x, paddle_pos_y, paddle_width, paddle_height):
-        paddle_size_increase_active = True
-        paddle_size_powerup = None
-        paddle_width *= 1.5  # Increase the paddle size by 50%
-        paddle_size_increase_timer = pygame.time.get_ticks()  # Start the timer
-
-    # Reset paddle size after power-up effect duration
-    if paddle_size_increase_active and pygame.time.get_ticks() - paddle_size_increase_timer > paddle_size_increase_duration:
-        paddle_size_increase_active = False
-        paddle_width = settings.paddle_width  # Reset to original size
-
-    # Check for collision with slow ball power-up
-    if slow_ball_powerup and slow_ball_powerup["rect"].colliderect(paddle_pos_x, paddle_pos_y, paddle_width, paddle_height):
-        slow_ball_active = True
-        slow_ball_powerup = None
-        original_speeds = [ball["velocity"][:] for ball in balls]  # Store original speeds
-        for ball in balls:
-            ball["velocity"][0] *= 0.5  # Reduce x velocity by 50%
-            ball["velocity"][1] *= 0.5  # Reduce y velocity by 50%
-        slow_ball_timer = pygame.time.get_ticks()  # Start the timer
-
-    # Reset ball speed after power-up effect duration
-    if slow_ball_active and pygame.time.get_ticks() - slow_ball_timer > slow_ball_duration:
-        slow_ball_active = False
-        for i, ball in enumerate(balls):
-            ball["velocity"] = original_speeds[i]  # Reset to original speed
-
-    # Check if all bricks are cleared
-    if all(all(brick is None for brick in row) for row in bricks):
-        # Advance to the next level
-        current_level += 1
-        if current_level > settings.num_levels:
-            current_level = 1  # Restart at level 1
-        bricks = generate_bricks(current_level)
-        multiball_active = False
-        ball_pos = [paddle_pos_x + paddle_width // 2, paddle_pos_y - ball_radius]
-        ball_attached = True
-        angle = random.uniform(30, 150)
-        speed = random.uniform(7, 13)
-        velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
-        balls = [{"pos": ball_pos, "velocity": velocity}]
-        print("Level cleared. Next level:", current_level)
+            velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
+            balls = [{"pos": ball_pos, "velocity": velocity}]
+            print("Level cleared. Next level:", current_level)
+        
+        time.sleep(0.01)  # Check for collisions every 10 milliseconds
 
 def game_over_screen():
     screen.fill(BLACK)
@@ -399,6 +408,13 @@ def start_game():
     running = True
     print("Game started. Tries:", tries, "Score:", score)
 
+    # Start threading for power-up movements and collision detection
+    powerup_thread = threading.Thread(target=move_powerups)
+    collision_thread = threading.Thread(target=detect_collisions)
+
+    powerup_thread.start()
+    collision_thread.start()
+
     # Main game loop
     while running:
         for event in pygame.event.get():
@@ -415,12 +431,6 @@ def start_game():
         move_paddle()
         draw_bricks(bricks)
         draw_edges()
-        if not multiball_active and random.random() < 0.001:  # Low probability to generate power-up
-            multiball_powerup = generate_multiball_powerup()
-        if not paddle_size_powerup and random.random() < 0.001:  # Low probability to generate power-up
-            paddle_size_powerup = generate_paddle_size_powerup()
-        if not slow_ball_powerup and random.random() < 0.001:  # Low probability to generate power-up
-            slow_ball_powerup = generate_slow_ball_powerup()
         draw_multiball_powerup(multiball_powerup)
         draw_paddle_size_powerup(paddle_size_powerup)
         draw_slow_ball_powerup(slow_ball_powerup)
