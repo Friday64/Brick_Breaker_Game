@@ -57,13 +57,15 @@ original_speeds = []
 ball_radius = settings.ball_radius
 ball_color = BLUE
 ball_pos = [paddle_pos_x + paddle_width // 2, paddle_pos_y - ball_radius]  # Start at center of the paddle
-angle = 90  # Launch angle is straight up
 speed = random.uniform(7, 13)
 velocity = [0, -speed]  # Directly upward
 
 # List to keep track of all active balls
 balls = [{"pos": ball_pos, "velocity": velocity}]
 ball_attached = True  # Ball starts attached to the paddle
+
+# Track paddle movement direction
+paddle_direction = 0  # -1 for left, 1 for right, 0 for no movement
 
 # Function to generate random colors
 def random_color():
@@ -168,12 +170,15 @@ def draw_slow_ball_powerup(powerup):
 
 # Function to move the paddle
 def move_paddle():
-    global paddle_pos_x, ball_attached
+    global paddle_pos_x, ball_attached, paddle_direction
     keys = pygame.key.get_pressed()
+    paddle_direction = 0
     if keys[pygame.K_LEFT] or keys[pygame.K_a]:
         paddle_pos_x -= paddle_speed
+        paddle_direction = -1
     if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
         paddle_pos_x += paddle_speed
+        paddle_direction = 1
 
     # Make sure the paddle doesn't go off screen
     if paddle_pos_x < 0:
@@ -379,7 +384,7 @@ def game_over_screen():
                 start_game()
 
 def start_game():
-    global running, tries, score, ball_pos, velocity, bricks, current_level, multiball_active, multiball_powerup, paddle_size_powerup, slow_ball_powerup, paddle_size_increase_active, paddle_size_increase_timer, slow_ball_active, slow_ball_timer, balls, speed, ball_attached
+    global running, tries, score, ball_pos, velocity, bricks, current_level, multiball_active, multiball_powerup, paddle_size_powerup, slow_ball_powerup, paddle_size_increase_active, paddle_size_increase_timer, slow_ball_active, slow_ball_timer, balls, speed, ball_attached, paddle_direction
 
     # Reset tries, score, level, and ball position
     tries = 3
@@ -416,7 +421,10 @@ def start_game():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and ball_attached:
+                # Launch the ball with horizontal velocity based on paddle direction
                 ball_attached = False
+                horizontal_speed = 3 * paddle_direction  # Adjust multiplier as needed for game balance
+                balls[0]["velocity"] = [horizontal_speed, -speed]
 
         screen.fill(BLACK)
         draw_score(score)
