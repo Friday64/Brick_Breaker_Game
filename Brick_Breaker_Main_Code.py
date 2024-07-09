@@ -270,13 +270,17 @@ def ball_behavior():
             # Reset ball position
             ball_pos = [paddle_pos_x + paddle_width // 2, paddle_pos_y - ball_radius]
             ball_attached = True
-            balls.append({"pos": ball_pos, "velocity": [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]})
+            angle = random.uniform(30, 150)
+            speed = random.uniform(7, 13)
+            velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
+            balls.append({"pos": ball_pos, "velocity": velocity})
             print(f"Ball reset. Tries left: {tries}")
 
             # Decrease the number of tries
             tries -= 1
         elif tries == 0:
             running = False
+            print("No tries left. Game over.")
             # Display game over screen
             game_over_screen()
 
@@ -393,6 +397,7 @@ def start_game():
     slow_ball_active = False
 
     running = True
+    print("Game started. Tries:", tries, "Score:", score)
 
     # Main game loop
     while running:
