@@ -54,13 +54,14 @@ original_speeds = []
 # Global variables for ball settings
 ball_radius = settings.ball_radius
 ball_color = BLUE
-ball_pos = [settings.width // 2, settings.height // 2]
+ball_pos = [paddle_pos_x + paddle_width // 2, paddle_pos_y - ball_radius]  # Start at center of the paddle
 angle = random.uniform(30, 150)
 speed = random.uniform(7, 13)
 velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
 
 # List to keep track of all active balls
 balls = [{"pos": ball_pos, "velocity": velocity}]
+ball_attached = True  # Ball starts attached to the paddle
 
 # Function to generate random colors
 def random_color():
@@ -165,7 +166,7 @@ def draw_slow_ball_powerup(powerup):
 
 # Function to move the paddle
 def move_paddle():
-    global paddle_pos_x
+    global paddle_pos_x, ball_attached
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT] or keys[pygame.K_a]:
         paddle_pos_x -= paddle_speed
@@ -178,10 +179,17 @@ def move_paddle():
     if paddle_pos_x > settings.width - paddle_width:
         paddle_pos_x = settings.width - paddle_width
 
+    # If the ball is attached to the paddle, move it with the paddle
+    if ball_attached:
+        balls[0]["pos"] = [paddle_pos_x + paddle_width // 2, paddle_pos_y - ball_radius]
+
 def ball_behavior():
-    global running, tries, score, current_level, bricks, multiball_active, balls, multiball_powerup, paddle_size_powerup, slow_ball_powerup, paddle_size_increase_active, paddle_size_increase_timer, paddle_width, slow_ball_active, slow_ball_timer, original_speeds
+    global running, tries, score, current_level, bricks, multiball_active, balls, multiball_powerup, paddle_size_powerup, slow_ball_powerup, paddle_size_increase_active, paddle_size_increase_timer, paddle_width, slow_ball_active, slow_ball_timer, original_speeds, ball_attached
 
     for ball in balls:
+        if ball_attached:
+            continue  # Skip the update if the ball is attached to the paddle
+
         ball_pos = ball["pos"]
         velocity = ball["velocity"]
 
@@ -259,11 +267,8 @@ def ball_behavior():
     if len(balls) == 0:
         if tries > 0:
             # Reset ball position
-            ball_pos = [settings.width // 2, settings.height // 2]
-            angle = random.uniform(30, 150)
-            speed = random.uniform(7, 11)
-            velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
-            balls.append({"pos": ball_pos, "velocity": velocity})
+            ball_pos = [paddle_pos_x + paddle_width // 2, paddle_pos_y - ball_radius]
+            ball_attached = True
 
             # Decrease the number of tries
             tries -= 1
@@ -328,7 +333,8 @@ def ball_behavior():
             current_level = 1  # Restart at level 1
         bricks = generate_bricks(current_level)
         multiball_active = False
-        ball_pos = [settings.width // 2, settings.height // 2]
+        ball_pos = [paddle_pos_x + paddle_width // 2, paddle_pos_y - ball_radius]
+        ball_attached = True
         angle = random.uniform(30, 150)
         speed = random.uniform(7, 13)
         velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
@@ -360,17 +366,18 @@ def game_over_screen():
                 start_game()
 
 def start_game():
-    global running, tries, score, ball_pos, velocity, bricks, current_level, multiball_active, multiball_powerup, paddle_size_powerup, slow_ball_powerup, paddle_size_increase_active, paddle_size_increase_timer, slow_ball_active, slow_ball_timer, balls, angle, speed
+    global running, tries, score, ball_pos, velocity, bricks, current_level, multiball_active, multiball_powerup, paddle_size_powerup, slow_ball_powerup, paddle_size_increase_active, paddle_size_increase_timer, slow_ball_active, slow_ball_timer, balls, angle, speed, ball_attached
 
     # Reset tries, score, level, and ball position
     tries = 3
     score = 0
     current_level = 1
-    ball_pos = [settings.width // 2, settings.height // 2]
+    ball_pos = [paddle_pos_x + paddle_width // 2, paddle_pos_y - ball_radius]
     angle = random.uniform(30, 150)
     speed = random.uniform(7, 13)
     velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
     balls = [{"pos": ball_pos, "velocity": velocity}]
+    ball_attached = True
 
     # Generate bricks for the first level
     bricks = generate_bricks(current_level)
@@ -388,6 +395,8 @@ def start_game():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and ball_attached:
+                ball_attached = False
 
         screen.fill(BLACK)
         draw_score(score)
