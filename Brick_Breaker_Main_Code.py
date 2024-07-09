@@ -33,6 +33,15 @@ paddle_pos_y = settings.height - 200
 paddle_pos_x = settings.width // 2 - settings.paddle_width // 2
 paddle_speed = settings.paddle_speed
 
+# Brick settings
+brick_rows = 5
+brick_columns = 10
+brick_width = 100
+brick_height = 50
+brick_spacing = 10
+brick_offset_x = (settings.width - (brick_columns * (brick_width + brick_spacing))) // 2
+brick_offset_y = 50
+
 # Level settings
 current_level = 1
 
