@@ -57,9 +57,9 @@ original_speeds = []
 ball_radius = settings.ball_radius
 ball_color = BLUE
 ball_pos = [paddle_pos_x + paddle_width // 2, paddle_pos_y - ball_radius]  # Start at center of the paddle
-angle = random.uniform(30, 150)
+angle = 90  # Launch angle is straight up
 speed = random.uniform(7, 13)
-velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
+velocity = [0, -speed]  # Directly upward
 
 # List to keep track of all active balls
 balls = [{"pos": ball_pos, "velocity": velocity}]
@@ -272,9 +272,7 @@ def ball_behavior():
             # Reset ball position
             ball_pos = [paddle_pos_x + paddle_width // 2, paddle_pos_y - ball_radius]
             ball_attached = True
-            angle = random.uniform(30, 150)
-            speed = random.uniform(7, 13)
-            velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
+            velocity = [0, -random.uniform(7, 13)]  # Directly upward
             balls.append({"pos": ball_pos, "velocity": velocity})
             print(f"Ball reset. Tries left: {tries}")
 
@@ -349,9 +347,7 @@ def detect_collisions():
             multiball_active = False
             ball_pos = [paddle_pos_x + paddle_width // 2, paddle_pos_y - ball_radius]
             ball_attached = True
-            angle = random.uniform(30, 150)
-            speed = random.uniform(7, 13)
-            velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
+            velocity = [0, -random.uniform(7, 13)]  # Directly upward
             balls = [{"pos": ball_pos, "velocity": velocity}]
             print("Level cleared. Next level:", current_level)
         
@@ -383,16 +379,15 @@ def game_over_screen():
                 start_game()
 
 def start_game():
-    global running, tries, score, ball_pos, velocity, bricks, current_level, multiball_active, multiball_powerup, paddle_size_powerup, slow_ball_powerup, paddle_size_increase_active, paddle_size_increase_timer, slow_ball_active, slow_ball_timer, balls, angle, speed, ball_attached
+    global running, tries, score, ball_pos, velocity, bricks, current_level, multiball_active, multiball_powerup, paddle_size_powerup, slow_ball_powerup, paddle_size_increase_active, paddle_size_increase_timer, slow_ball_active, slow_ball_timer, balls, speed, ball_attached
 
     # Reset tries, score, level, and ball position
     tries = 3
     score = 0
     current_level = 1
     ball_pos = [paddle_pos_x + paddle_width // 2, paddle_pos_y - ball_radius]
-    angle = random.uniform(30, 150)
     speed = random.uniform(7, 13)
-    velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
+    velocity = [0, -speed]  # Directly upward
     balls = [{"pos": ball_pos, "velocity": velocity}]
     ball_attached = True
 
