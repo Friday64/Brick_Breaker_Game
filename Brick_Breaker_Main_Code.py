@@ -362,13 +362,13 @@ def game_over_screen():
     screen.fill(BLACK)
     
     font = pygame.font.SysFont(None, 50)
-    texts = ["Game Over", f"Score: {score}", "Press Enter to Restart"]
+    texts = ["Game Over", f"Score: " + str(score), "Press Enter to Restart"]
     y_offset = settings.height // 2 - 100  # Start a bit higher on the screen
 
     for text in texts:
         rendered_text = font.render(text, True, WHITE)
         text_rect = rendered_text.get_rect(center=(settings.width // 2, y_offset))
-        screen.blit(text, text_rect)
+        screen.blit(rendered_text, text_rect)
         y_offset += 100  # Move down for the next line of text
 
     pygame.display.update()
@@ -421,9 +421,9 @@ def start_game():
             if event.type == pygame.QUIT:
                 running = False
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and ball_attached:
-                # Launch the ball with horizontal velocity based on paddle direction
+                # Launch the ball with horizontal velocity based on paddle position
                 ball_attached = False
-                horizontal_speed = 3 * paddle_direction  # Adjust multiplier as needed for game balance
+                horizontal_speed = (balls[0]["pos"][0] - (paddle_pos_x + paddle_width / 2)) / (paddle_width / 2) * speed
                 balls[0]["velocity"] = [horizontal_speed, -speed]
 
         screen.fill(BLACK)
