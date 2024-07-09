@@ -368,7 +368,7 @@ def game_over_screen():
     for text in texts:
         rendered_text = font.render(text, True, WHITE)
         text_rect = rendered_text.get_rect(center=(settings.width // 2, y_offset))
-        screen.blit(rendered_text, text_rect)
+        screen.blit(text, text_rect)
         y_offset += 100  # Move down for the next line of text
 
     pygame.display.update()
