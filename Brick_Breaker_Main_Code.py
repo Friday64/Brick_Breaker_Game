@@ -209,6 +209,7 @@ def ball_behavior():
         # Ball falls below the bottom edge
         if ball_pos[1] + ball_radius >= settings.height:
             balls.remove(ball)
+            print(f"Ball removed. Remaining balls: {len(balls)}")
 
         # Ball collision detection with paddle
         if (paddle_pos_x <= ball_pos[0] <= paddle_pos_x + paddle_width and
@@ -269,6 +270,8 @@ def ball_behavior():
             # Reset ball position
             ball_pos = [paddle_pos_x + paddle_width // 2, paddle_pos_y - ball_radius]
             ball_attached = True
+            balls.append({"pos": ball_pos, "velocity": [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]})
+            print(f"Ball reset. Tries left: {tries}")
 
             # Decrease the number of tries
             tries -= 1
@@ -339,6 +342,7 @@ def ball_behavior():
         speed = random.uniform(7, 13)
         velocity = [speed * math.cos(math.radians(angle)), speed * math.sin(math.radians(angle))]
         balls = [{"pos": ball_pos, "velocity": velocity}]
+        print("Level cleared. Next level:", current_level)
 
 def game_over_screen():
     screen.fill(BLACK)
