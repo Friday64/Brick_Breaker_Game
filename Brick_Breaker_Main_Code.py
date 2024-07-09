@@ -191,7 +191,7 @@ def move_paddle():
         balls[0]["pos"] = [paddle_pos_x + paddle_width // 2, paddle_pos_y - ball_radius]
 
 def ball_behavior():
-    global running, tries, score, current_level, bricks, multiball_active, balls, multiball_powerup, paddle_size_powerup, slow_ball_powerup, paddle_size_increase_active, paddle_size_increase_timer, paddle_width, slow_ball_active, slow_ball_timer, original_speeds, ball_attached
+    global running, tries, score, current_level, bricks, multiball_active, balls, multiball_powerup, paddle_size_powerup, slow_ball_powerup, paddle_size_increase_active, paddle_size_increase_timer, paddle_width, slow_ball_active, slow_ball_timer, original_speeds, ball_attached, paddle_direction
 
     for ball in balls:
         if ball_attached:
@@ -222,6 +222,10 @@ def ball_behavior():
         if (paddle_pos_x <= ball_pos[0] <= paddle_pos_x + paddle_width and
                 paddle_pos_y - ball_radius <= ball_pos[1] <= paddle_pos_y):
             velocity[1] = -velocity[1]
+
+            # Apply horizontal velocity based on paddle movement direction
+            horizontal_speed = 0.2 * (ball_pos[0] - (paddle_pos_x + paddle_width / 2))
+            velocity[0] += horizontal_speed
             ball_pos[1] = paddle_pos_y - ball_radius  # Ensures the ball doesn't get stuck in the paddle
 
         # Ball collision detection with bricks
