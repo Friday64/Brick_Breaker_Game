@@ -417,7 +417,8 @@ def game_over_screen():
                 sys.exit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                 waiting = False
-                start_game()
+
+    start_game()  # Restart the game
 
 def start_game():
     """Start the game."""
