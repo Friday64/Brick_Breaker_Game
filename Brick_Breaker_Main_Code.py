@@ -239,6 +239,15 @@ def ball_behavior():
                         row.remove(brick)
                         score += 10
                         velocity[1] = -velocity[1]
+                        # Randomly generate a power-up when a brick is destroyed
+                        if random.random() < 0.1:  # 10% chance to spawn a power-up
+                            powerup_type = random.choice(["multiball", "paddle_size", "slow_ball"])
+                            if powerup_type == "multiball" and multiball_powerup is None:
+                                multiball_powerup = generate_multiball_powerup()
+                            elif powerup_type == "paddle_size" and paddle_size_powerup is None:
+                                paddle_size_powerup = generate_paddle_size_powerup()
+                            elif powerup_type == "slow_ball" and slow_ball_powerup is None:
+                                slow_ball_powerup = generate_slow_ball_powerup()
                         break
 
             # Update ball position
@@ -307,10 +316,16 @@ def move_powerups():
         try:
             if multiball_powerup:
                 multiball_powerup["rect"].y += multiball_powerup["speed"]
+                if multiball_powerup["rect"].y > settings.height:
+                    multiball_powerup = None  # Remove power-up if it goes off screen
             if paddle_size_powerup:
                 paddle_size_powerup["rect"].y += paddle_size_powerup["speed"]
+                if paddle_size_powerup["rect"].y > settings.height:
+                    paddle_size_powerup = None  # Remove power-up if it goes off screen
             if slow_ball_powerup:
                 slow_ball_powerup["rect"].y += slow_ball_powerup["speed"]
+                if slow_ball_powerup["rect"].y > settings.height:
+                    slow_ball_powerup = None  # Remove power-up if it goes off screen
         finally:
             lock.release()
         time.sleep(0.01)  # Update power-up positions every 10 milliseconds
