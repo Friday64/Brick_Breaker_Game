@@ -377,6 +377,7 @@ def detect_collisions():
 
             # Check if all bricks are cleared
             if all(all(brick is None for brick in row) for row in bricks):
+                print("All bricks cleared. Advancing to the next level.")
                 # Advance to the next level
                 current_level += 1
                 if current_level > settings.num_levels:
