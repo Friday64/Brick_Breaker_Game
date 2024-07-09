@@ -224,8 +224,7 @@ def ball_behavior():
             velocity[1] = -velocity[1]
 
             # Apply horizontal velocity based on paddle movement direction
-            horizontal_speed = 0.2 * (ball_pos[0] - (paddle_pos_x + paddle_width / 2))
-            velocity[0] += horizontal_speed
+            velocity[0] += 0.5 * paddle_direction
             ball_pos[1] = paddle_pos_y - ball_radius  # Ensures the ball doesn't get stuck in the paddle
 
         # Ball collision detection with bricks
@@ -427,7 +426,7 @@ def start_game():
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and ball_attached:
                 # Launch the ball with horizontal velocity based on paddle position
                 ball_attached = False
-                horizontal_speed = (balls[0]["pos"][0] - (paddle_pos_x + paddle_width / 2)) / (paddle_width / 2) * speed
+                horizontal_speed = 2 * paddle_direction  # Adjust multiplier as needed for game balance
                 balls[0]["velocity"] = [horizontal_speed, -speed]
 
         screen.fill(BLACK)
