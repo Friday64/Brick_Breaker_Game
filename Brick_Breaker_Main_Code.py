@@ -224,7 +224,7 @@ def ball_behavior():
             velocity[1] = -velocity[1]
 
             # Apply horizontal velocity based on paddle movement direction
-            velocity[0] += 0.5 * paddle_direction
+            velocity[0] += 0.8 * paddle_direction  # Increased effect of paddle movement
             ball_pos[1] = paddle_pos_y - ball_radius  # Ensures the ball doesn't get stuck in the paddle
 
         # Ball collision detection with bricks
