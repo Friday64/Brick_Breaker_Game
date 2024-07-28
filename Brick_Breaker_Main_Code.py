@@ -27,7 +27,7 @@ frame_rate = settings.frame_rate  # Adjustable frame rate
 # Paddle settings
 paddle_width = settings.paddle_width
 paddle_height = settings.paddle_height
-paddle_pos_y = settings.height - 200
+paddle_pos_y = settings.height - 100
 paddle_pos_x = settings.width // 2 - settings.paddle_width // 2
 paddle_speed = settings.paddle_speed
 
