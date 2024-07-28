@@ -2,29 +2,36 @@ import pygame
 import settings
 import random
 
-generate_powerups = lambda: random.randint(0, 2)
-handle_powerups = lambda: None
+def generate_powerups():
+    return random.randint(0, 2)
+
+def handle_powerups():
+    pass
+
+def draw_text(screen, text, position, font_size=50, color=(255, 255, 255)):
+    font = pygame.font.SysFont(None, font_size)
+    rendered_text = font.render(text, True, color)
+    screen.blit(rendered_text, position)
+
 def draw_score(screen, score):
-    font = pygame.font.SysFont(None, 50)
-    text = font.render(f"Score: {score}", True, (255, 255, 255))
-    screen.blit(text, (20, 20))
+    draw_text(screen, f"Score: {score}", (20, 20))
 
 def draw_tries(screen, tries):
-    font = pygame.font.SysFont(None, 50)
-    text = font.render(f"Tries: {tries}", True, (255, 255, 255))
-    screen.blit(text, (settings.width - 300, 20))
+    draw_text(screen, f"Tries: {tries}", (settings.width - 300, 20))
 
 def draw_level(screen, level):
-    font = pygame.font.SysFont(None, 50)
-    text = font.render(f"Level: {level}", True, (255, 255, 255))
-    screen.blit(text, (settings.width - 300, settings.height - 50))
+    draw_text(screen, f"Level: {level}", (settings.width - 300, settings.height - 50))
 
 def draw_edges(screen):
     edge_thickness = 10
     edge_color = (255, 255, 255, 128)  # White with transparency
-    pygame.draw.rect(screen, edge_color, (0, 0, edge_thickness, settings.height))
-    pygame.draw.rect(screen, edge_color, (settings.width - edge_thickness, 0, edge_thickness, settings.height))
-    pygame.draw.rect(screen, edge_color, (0, 0, settings.width, edge_thickness))
+    edges = [
+        (0, 0, edge_thickness, settings.height),
+        (settings.width - edge_thickness, 0, edge_thickness, settings.height),
+        (0, 0, settings.width, edge_thickness)
+    ]
+    for edge in edges:
+        pygame.draw.rect(screen, edge_color, edge)
 
 def detect_collisions(ball, bricks, paddle, powerups):
     # Ball-Paddle collision
@@ -33,7 +40,7 @@ def detect_collisions(ball, bricks, paddle, powerups):
         ball.rect.bottom = paddle.rect.top
 
     # Ball-Brick collisions
-    for brick in bricks:
+    for brick in bricks[:]:  # Use a copy of the list to safely remove items
         if ball.rect.colliderect(brick.rect):
             ball.direction[1] *= -1
             bricks.remove(brick)
@@ -41,7 +48,7 @@ def detect_collisions(ball, bricks, paddle, powerups):
                 powerups.append(generate_powerups())
 
     # Powerup-Paddle collisions
-    for powerup in powerups:
+    for powerup in powerups[:]:  # Use a copy of the list to safely remove items
         if powerup.rect.colliderect(paddle.rect):
             handle_powerups([powerup], paddle, [ball])
             powerups.remove(powerup)

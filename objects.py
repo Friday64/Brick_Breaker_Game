@@ -14,9 +14,7 @@ class Ball:
 
     def move(self):
         if not self.attached:
-            self.rect.x += self.direction[0] * self.speed
-            self.rect.y += self.direction[1] * self.speed
-
+            self.rect.move_ip(self.direction[0] * self.speed, self.direction[1] * self.speed)
             if self.rect.left <= 0 or self.rect.right >= settings.width:
                 self.direction[0] *= -1
             if self.rect.top <= 0:
@@ -26,8 +24,7 @@ class Ball:
         pygame.draw.circle(screen, self.color, self.rect.center, self.radius)
 
     def reset(self, paddle):
-        self.rect.centerx = paddle.rect.centerx
-        self.rect.bottom = paddle.rect.top
+        self.rect.midbottom = paddle.rect.midtop
         self.attached = True
         self.direction = [0, -1]
 
@@ -38,10 +35,8 @@ class Paddle:
         self.speed = settings.paddle_speed
 
     def move(self, keys):
-        if keys[pygame.K_LEFT] and self.rect.left > 0:
-            self.rect.x -= self.speed
-        if keys[pygame.K_RIGHT] and self.rect.right < settings.width:
-            self.rect.x += self.speed
+        dx = (keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]) * self.speed
+        self.rect.x = max(0, min(settings.width - self.rect.width, self.rect.x + dx))
 
     def draw(self, screen):
         pygame.draw.rect(screen, self.color, self.rect)
