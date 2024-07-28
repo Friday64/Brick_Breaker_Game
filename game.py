@@ -1,18 +1,17 @@
 import pygame
 import sys
 import random
-import threading
 import settings
 from objects import Ball, Paddle, Brick
-from powerups import generate_powerups, handle_powerups
-from utils import draw_score, draw_tries, draw_level, draw_edges, detect_collisions
+from powerups import generate_powerup, handle_powerups
+from utils import draw_score, draw_tries, draw_level, draw_edges
 
 def start_game():
     pygame.init()
-    screen = pygame.display.set_mode((settings.width, settings.height), pygame.DOUBLEBUF | pygame.HWSURFACE)
+    screen = pygame.display.set_mode((settings.width, settings.height))
     clock = pygame.time.Clock()
 
-    paddle = Paddle(settings.width // 2 - settings.paddle_width // 2, settings.height - 200, settings.paddle_width, settings.paddle_height)
+    paddle = Paddle(settings.width // 2 - settings.paddle_width // 2, settings.height - 50, settings.paddle_width, settings.paddle_height)
     ball = Ball(paddle.rect.centerx, paddle.rect.top - settings.ball_radius, settings.ball_radius)
     bricks = generate_bricks()
     powerups = []
@@ -22,14 +21,9 @@ def start_game():
     current_level = 1
     running = True
 
-    powerup_thread = threading.Thread(target=move_powerups, args=(powerups,), daemon=True)
-    collision_thread = threading.Thread(target=detect_collisions, args=(ball, bricks, paddle, powerups), daemon=True)
-    powerup_thread.start()
-    collision_thread.start()
-
     while running:
-        running = handle_events()
-        update_game_state(paddle, ball, bricks, powerups, score, tries, current_level)
+        running = handle_events(ball)
+        update_game_state(paddle, ball, bricks, powerups, score, tries)
         draw_game(screen, paddle, ball, bricks, powerups, score, tries, current_level)
         pygame.display.flip()
         clock.tick(settings.frame_rate)
@@ -37,23 +31,47 @@ def start_game():
     pygame.quit()
     sys.exit()
 
-def handle_events():
+def handle_events(ball):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             return False
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+            print("Space pressed, detaching ball")
+            ball.attached = False
+            if ball.direction == [0, -1]:
+                ball.direction = [random.choice([-1, 1]), -1]
     return True
 
-def update_game_state(paddle, ball, bricks, powerups, score, tries, current_level):
+def update_game_state(paddle, ball, bricks, powerups, score, tries):
     keys = pygame.key.get_pressed()
     paddle.move(keys)
+    
+    print(f"Before move - Ball pos: {ball.rect.center}, direction: {ball.direction}, speed: {ball.speed}, attached: {ball.attached}")
     ball.move()
+    print(f"After move - Ball pos: {ball.rect.center}, direction: {ball.direction}, speed: {ball.speed}, attached: {ball.attached}")
 
     if ball.rect.bottom > settings.height:
+        print("Ball out of bounds, resetting...")
         tries -= 1
         if tries <= 0:
-            game_over_screen(pygame.display.get_surface(), score)
+            print("Game over")
             return
         ball.reset(paddle)
+        print(f"After reset - Ball pos: {ball.rect.center}, direction: {ball.direction}, speed: {ball.speed}, attached: {ball.attached}")
+
+    # Ball-Paddle collision
+    if ball.rect.colliderect(paddle.rect) and ball.direction[1] > 0:
+        ball.direction[1] *= -1
+        ball.rect.bottom = paddle.rect.top
+
+    # Ball-Brick collisions
+    for brick in bricks[:]:
+        if ball.rect.colliderect(brick.rect):
+            ball.direction[1] *= -1
+            bricks.remove(brick)
+            score += 1
+            if random.random() < 0.1:  # 10% chance to spawn a powerup
+                powerups.append(generate_powerup())
 
     handle_powerups(powerups, paddle, [ball])
 
@@ -71,35 +89,9 @@ def draw_game(screen, paddle, ball, bricks, powerups, score, tries, current_leve
     for powerup in powerups:
         powerup.draw(screen)
 
-def game_over_screen(screen, score):
-    screen.fill((0, 0, 0))
-    font = pygame.font.SysFont(None, 50)
-    texts = [
-        ("Game Over", (255, 255, 255), 0),
-        (f"Score: {score}", (255, 255, 255), 100),
-        ("Press Enter to Restart", (255, 255, 255), 200)
-    ]
-
-    for text, color, y_offset in texts:
-        rendered_text = font.render(text, True, color)
-        screen.blit(rendered_text, (settings.width // 2 - rendered_text.get_width() // 2, settings.height // 2 - 100 + y_offset))
-
-    pygame.display.flip()
-
-    waiting = True
-    while waiting:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
-                waiting = False
-
-    start_game()
-
 def generate_bricks():
     bricks = []
-    brick_width, brick_height = 100, 50
+    brick_width, brick_height = 60, 20
     brick_spacing = 10
     for i in range(5):
         for j in range(10):
@@ -107,9 +99,3 @@ def generate_bricks():
             y = i * (brick_height + brick_spacing) + brick_spacing + 50
             bricks.append(Brick(x, y, brick_width, brick_height))
     return bricks
-
-def move_powerups(powerups):
-    while True:
-        for powerup in powerups:
-            powerup.move()
-        pygame.time.wait(10)
