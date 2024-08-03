@@ -1,3 +1,4 @@
+#settingd for the game 
 width = 800
 height = 600
 frame_rate = 60
