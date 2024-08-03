@@ -4,7 +4,7 @@ Currently in Development: Brick Breaker game with pygame built in physics librar
 
 ## Installation
 
-Ensure you have Python 3.12.2 installed on your system. You can download it from [python.org](https://www.python.org).
+Ensure you have Python 3.10.11 installed on your system. You can download it from [python.org](https://www.python.org).
 
 ### Set up a Virtual Environment:
 
