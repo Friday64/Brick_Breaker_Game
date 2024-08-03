@@ -11,7 +11,7 @@ Ensure you have Python 3.10.11 installed on your system. You can download it fro
 It's a good practice to use a virtual environment to manage dependencies. Navigate to your project directory and run the following command:
 
 ```sh
-python3.12 -m venv venv
+python3.10 -m venv venv
 ```
 On Windows, use `venv\Scripts\activate`
 
