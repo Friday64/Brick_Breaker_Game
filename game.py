@@ -64,7 +64,6 @@ def handle_events(ball):
         if event.type == pygame.QUIT:
             return False
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-            print("Space pressed, detaching ball")
             ball.attached = False
             if ball.direction == [0, -1]:
                 ball.direction = [random.choice([-1, 1]), -1]
@@ -87,11 +86,7 @@ def update_game_state(paddle, ball, bricks, powerups, score, tries):
     """
     keys = pygame.key.get_pressed()
     paddle.move(keys)
-    
-    print(f"Before move - Ball pos: {ball.rect.center}, direction: {ball.direction}, speed: {ball.speed}, attached: {ball.attached}")
     ball.move()
-    print(f"After move - Ball pos: {ball.rect.center}, direction: {ball.direction}, speed: {ball.speed}, attached: {ball.attached}")
-
     if ball.rect.bottom > settings.height:
         print("Ball out of bounds, resetting...")
         tries -= 1
@@ -99,7 +94,7 @@ def update_game_state(paddle, ball, bricks, powerups, score, tries):
             print("Game over")
             return
         ball.reset(paddle)
-        print(f"After reset - Ball pos: {ball.rect.center}, direction: {ball.direction}, speed: {ball.speed}, attached: {ball.attached}")
+    
 
     # Ball-Paddle collision
     if ball.rect.colliderect(paddle.rect) and ball.direction[1] > 0:
