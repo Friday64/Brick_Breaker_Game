@@ -96,7 +96,7 @@ def handle_powerups(powerups, paddle, balls):
         powerup.move()
         if powerup.rect.colliderect(paddle.rect):
             if powerup.effect == 'multiball':
-                new_ball = Ball(balls[0].rect.centerx, balls[0].rect.centery, settings.ball_radius)
+                new_ball = ball(balls[0].rect.centerx, balls[0].rect.centery, settings.ball_radius)
                 new_ball.attached = False
                 new_ball.direction = [random.uniform(-1, 1), random.uniform(-1, 1)]
                 balls.append(new_ball)
