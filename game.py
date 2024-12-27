@@ -86,7 +86,7 @@ def update_game_state(paddle, ball, bricks, powerups, score, tries):
     """
     keys = pygame.key.get_pressed()
     paddle.move(keys)
-    ball.move()
+    ball.move(bricks)
     if ball.rect.bottom > settings.height:
         print("Ball out of bounds, resetting...")
         tries -= 1
