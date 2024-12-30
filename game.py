@@ -65,8 +65,6 @@ def handle_events(ball):
             return False
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
             ball.attached = False
-            if ball.direction == [0, -1]:
-                ball.direction = [random.choice([-1, 1]), -1]
     return True
 
 def update_game_state(paddle, ball, bricks, powerups, score, tries):

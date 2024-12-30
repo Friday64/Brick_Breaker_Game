@@ -74,7 +74,6 @@ class Ball:
             paddle (Paddle): The paddle object.
         """
         self.rect.centerx = paddle.rect.centerx
-        self.rect.bottom = paddle.rect.top
         self.attached = True
         self.direction = [0, -1]
 
